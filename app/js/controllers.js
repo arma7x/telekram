@@ -620,8 +620,40 @@ angular.module('myApp.controllers', ['myApp.i18n'])
 
     var keydownListener = function(e) {
       console.log('AppIMController keydownListener');
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
       switch (e.key) {
+        case 'Insert':
+        case 'SoftLeft':
+          var MENU = document.getElementById('navbar-toggle-wrap')
+          if (MENU.classList.contains("open")) {
+            break
+          }
+          if (document.location.hash === '#/im') {
+            var IMDP = document.getElementById('im_dialogs_panel')
+            if (IMDP.classList.contains("im_dialogs_panel_search")) {
+              $scope.searchClear()
+            } else {
+              $scope.toggleSearch()
+            }
+          }
+          break;
+        case 'Home':
+        case 'SoftRight':
+          if (document.location.hash === '#/im') {
+            if (!$scope.curDialog.peer) {
+              var MENU = document.getElementById('menu_button')
+              MENU.click()
+            }
+          }
+          break;
         case 'ArrowUp':
+          var MENU = document.getElementById('navbar-toggle-wrap')
+          if (MENU.classList.contains("open")) {
+            break
+          }
           if (document.location.hash === '#/im') {
             var list = document.getElementById("im_dialogs_col")
             var nav = document.querySelectorAll('.im_dialog_wrap')
@@ -637,11 +669,15 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 nav[move + 1].style.backgroundColor = '#fff'
               }
               tabIndex = move
-              list.scrollTop = (targetElement.offsetTop - 100)
+              list.scrollTop = (targetElement.offsetTop - 130)
             }
           }
           break
         case 'ArrowDown':
+          var MENU = document.getElementById('navbar-toggle-wrap')
+          if (MENU.classList.contains("open")) {
+            break
+          }
           if (document.location.hash === '#/im') {
             var list = document.getElementById("im_dialogs_col")
             var nav = document.querySelectorAll('.im_dialog_wrap')
@@ -657,11 +693,15 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 nav[move - 1].style.backgroundColor = '#fff'
               }
               tabIndex = move
-              list.scrollTop = (targetElement.offsetTop - 100)
+              list.scrollTop = (targetElement.offsetTop - 130)
             }
           }
           break
         case 'Enter':
+          var MENU = document.getElementById('navbar-toggle-wrap')
+          if (MENU.classList.contains("open")) {
+            break
+          }
           if (document.location.hash === '#/im') {
             var nav = document.querySelectorAll('.im_dialog_wrap')
             var targetElement = nav[tabIndex]
@@ -674,6 +714,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'End':
         case 'Backspace':
         case 'EndCall':
+          var MENU = document.getElementById('navbar-toggle-wrap')
+          if (MENU.classList.contains("open")) {
+            var MENU = document.getElementById('menu_button')
+            MENU.click()
+            e.preventDefault()
+            e.stopPropagation()
+            break
+          }
           if (document.location.hash !== '#/im') {
             e.preventDefault()
             e.stopPropagation()

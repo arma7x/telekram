@@ -81,7 +81,7 @@ angular.module('myApp.directives')
           height: $($window).height() -
             (headWrap ? headWrap.offsetHeight : 46) -
             (panelWrap ? panelWrap.offsetHeight : 58) -
-            parseInt($(dialogsColWrap).css('paddingBottom') || 0)
+            parseInt($(dialogsColWrap).css('paddingBottom') || 0) - 30
         })
       }
 

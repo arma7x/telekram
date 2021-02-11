@@ -61,7 +61,7 @@
     height: 28px;
   }
   .navbar_peer_not_selected .navbar-toggle-wrap .navbar-toggle {
-    padding: 8px 17px;
+    padding: 7.5px 17px;
   }
   .navbar-toggle-wrap .navbar-toggle {
     float: none;
@@ -111,6 +111,10 @@
     display: block;
     line-height: 28px;
   }
+  .dropdown-menu {
+    border: none;
+    border-radius: 0px;
+  }
   .softkey {
     padding: 0 4px;
     display: flex;
@@ -152,13 +156,15 @@
 
       <a class="navbar-peer-wrap" my-peer-photolink="historyPeer.id" peer-watch="true"></a>
 
-      <div class="navbar-toggle-wrap dropdown" dropdown ng-switch="!curDialog.peer">
-        <a class="dropdown-toggle navbar-toggle" dropdown-toggle>
+      <div id="navbar-toggle-wrap" class="navbar-toggle-wrap dropdown" dropdown ng-switch="!curDialog.peer">
+        <a id="menu_button" style="visibility:hidden;" class="dropdown-toggle navbar-toggle" dropdown-toggle>
+<!--
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
+-->
         </a>
-        <ul ng-switch-when="true" class="dropdown-menu">
+        <ul ng-switch-when="true" class="dropdown-menu" style="margin:0;right:0;width:240px;height:238px;">
           <li><a ng-click="openGroup()" my-i18n="head_new_group"></a></li>
           <li><a ng-click="importContact()" my-i18n="head_new_contact"></a></li>
           <li ng-if="!isEmpty.contacts"><a ng-click="openContacts()" my-i18n="head_contacts"></a></li>
