@@ -2,13 +2,20 @@
   html {
     background: white!important;
   }
-  .page_wrap,
-  .im_page_wrap {
+  .page_wrap {
     overflow: hidden;
-    height: 290px;
+    height: 236px;
+    margin-top: 28px;
+  }
+  .im_page_wrap {
+    
   }
   .tg_page_head {
+    z-index: 1;
+    position: fixed;
+    top: 0;
     height: 28px!important;
+    width: 100%;
   }
   .tg_page_head .navbar {
     min-height: 28px;
@@ -71,16 +78,15 @@
     border-radius: 0;
   }
   .navbar-peer-wrap {
-    margin-right: 5px;
+    margin-right: 0px;
     display: block;
     float: right;
     width: 32px;
     height: 28px;
-    padding: 1px;
   }
   .navbar-peer-wrap img {
-    margin-top: px;
-    margin-left: 4px;
+    margin-top: -3px;
+    margin-left: -2px;
     width: 24px;
     height: 24px;
     border-radius: 12px;
@@ -154,7 +160,7 @@
     <div class="container">
 
 
-      <a class="navbar-peer-wrap" my-peer-photolink="historyPeer.id" peer-watch="true"></a>
+      <a id="navbar-peer-wrap" class="navbar-peer-wrap" my-peer-photolink="historyPeer.id" peer-watch="true"></a>
 
       <div id="navbar-toggle-wrap" class="navbar-toggle-wrap dropdown" dropdown ng-switch="!curDialog.peer">
         <a id="menu_button" style="visibility:hidden;" class="dropdown-toggle navbar-toggle" dropdown-toggle>
@@ -164,25 +170,25 @@
           <span class="icon-bar"></span>
 -->
         </a>
-        <ul ng-switch-when="true" class="dropdown-menu" style="margin:0;right:0;width:240px;height:238px;">
-          <li><a ng-click="openGroup()" my-i18n="head_new_group"></a></li>
-          <li><a ng-click="importContact()" my-i18n="head_new_contact"></a></li>
-          <li ng-if="!isEmpty.contacts"><a ng-click="openContacts()" my-i18n="head_contacts"></a></li>
-          <li><a ng-click="openSettings()" my-i18n="head_settings"></a></li>
-          <li><a ng-click="logOut()" my-i18n="head_log_out"></a></li>
+        <ul id="ul_menu_nav" ng-switch-when="true" class="dropdown-menu" style="margin:0;right:0;width:240px;height:238px;">
+          <li class="nav_menu"><a ng-click="openGroup()" my-i18n="head_new_group"></a></li>
+          <li class="nav_menu"><a ng-click="importContact()" my-i18n="head_new_contact"></a></li>
+          <li class="nav_menu" ng-if="!isEmpty.contacts"><a ng-click="openContacts()" my-i18n="head_contacts"></a></li>
+          <li class="nav_menu"><a ng-click="openSettings()" my-i18n="head_settings"></a></li>
+          <li class="nav_menu"><a ng-click="logOut()" my-i18n="head_log_out"></a></li>
         </ul>
-        <ul ng-switch-default class="dropdown-menu">
-          <li><a ng-click="toggleEdit()" my-i18n="head_select_messages"></a></li>
-          <li ng-if="!historyFilter.mediaType" class="divider"></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('photos')" my-i18n="head_media_photos"></a></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('video')" my-i18n="head_media_video"></a></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('documents')" my-i18n="head_media_documents"></a></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('music')" my-i18n="head_media_music"></a></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('urls')" my-i18n="head_media_links"></a></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('audio')" my-i18n="head_media_audio"></a></li>
-          <li ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('round')" my-i18n="head_media_round"></a></li>
-          <li ng-if="!historyFilter.mediaType && isHistoryPeerGroup()" class="divider"></li>
-          <li ng-if="!historyFilter.mediaType && isHistoryPeerGroup()"><a ng-click="toggleMedia('mentions')" my-i18n="head_media_mymentions"></a></li>
+        <ul id="ul_dialog_nav" ng-switch-default class="dropdown-menu" style="position:static;margin:0;right:0;width:240px;height:238px;">
+          <li class="nav_dialog"><a ng-click="toggleEdit()" my-i18n="head_select_messages"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType" class="divider"></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('photos')" my-i18n="head_media_photos"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('video')" my-i18n="head_media_video"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('documents')" my-i18n="head_media_documents"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('music')" my-i18n="head_media_music"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('urls')" my-i18n="head_media_links"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('audio')" my-i18n="head_media_audio"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('round')" my-i18n="head_media_round"></a></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType && isHistoryPeerGroup()" class="divider"></li>
+          <li class="nav_dialog" ng-if="!historyFilter.mediaType && isHistoryPeerGroup()"><a ng-click="toggleMedia('mentions')" my-i18n="head_media_mymentions"></a></li>
         </ul>
       </div>
 
@@ -286,11 +292,7 @@
       </div>
 
       <div class="softkey">
-        <span class="left">
-          <a ng-click="toggleSearch()">
-            <i class="icon-search" style="margin-top:6px;"></i>
-          </a>
-        </span>
+        <span class="left"><i class="icon-search" style="margin-top:6px;"></i></span>
         <span class="center">SELECT</span>
         <span class="right">Menu</span>
       </div>

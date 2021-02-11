@@ -314,7 +314,7 @@ angular.module('myApp.directives')
 
         var historyH = $($window).height() - bottomPanelWrap.offsetHeight - (headWrap ? headWrap.offsetHeight : 46) - pinnedHeight
         $(historyWrap).css({
-          height: historyH
+          height: historyH - 22
         })
 
         updateBottomizer()

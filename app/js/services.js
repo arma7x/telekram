@@ -308,6 +308,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         windowClass: 'user_modal_window mobile_modal',
         backdrop: 'single'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push(modalInstance);
     }
 
     function importContact (phone, firstName, lastName) {
@@ -833,19 +840,35 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       scope.chatID = chatID
 
       if (isChannel(chatID)) {
+        console.log('CHANNEL');
         var modalInstance = $modal.open({
           templateUrl: templateUrl('channel_modal'),
           controller: 'ChannelModalController',
           scope: scope,
           windowClass: 'chat_modal_window channel_modal_window mobile_modal'
         })
+        modalInstance.result.finally(function() {
+          window['MODAL_STACK'].pop()
+        })
+        if (window['MODAL_STACK'] == null) {
+          window['MODAL_STACK'] = []
+        }
+        window['MODAL_STACK'].push(modalInstance);
       } else {
+        console.log('CHAT');
         var modalInstance = $modal.open({
           templateUrl: templateUrl('chat_modal'),
           controller: 'ChatModalController',
           scope: scope,
           windowClass: 'chat_modal_window mobile_modal'
         })
+        modalInstance.result.finally(function() {
+          window['MODAL_STACK'].pop()
+        })
+        if (window['MODAL_STACK'] == null) {
+          window['MODAL_STACK'] = []
+        }
+        window['MODAL_STACK'].push(modalInstance);
       }
     }
 

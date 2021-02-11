@@ -616,13 +616,28 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   .controller('AppIMController', function ($q, qSync, $scope, $location, $routeParams, $modal, $rootScope, $modalStack, MtpApiManager, AppUsersManager, AppChatsManager, AppMessagesManager, AppPeersManager, ContactsSelectService, ChangelogNotifyService, ErrorService, AppRuntimeManager, HttpsMigrateService, LayoutSwitchService, LocationParamsService, AppStickersManager) {
     $scope.$on('$routeUpdate', updateCurDialog)
 
-     var tabIndex = -1
+    var tabIndex = -1
+    var tabIndexMenu = -1
 
     var keydownListener = function(e) {
       console.log('AppIMController keydownListener');
       if (window['ErrorServiceStatus']) {
         e.preventDefault()
         return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1]
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.preventDefault()
+              MODAL.dismiss()
+              break;
+          }
+          return
+        }
       }
       switch (e.key) {
         case 'Insert':
@@ -642,16 +657,39 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           break;
         case 'Home':
         case 'SoftRight':
-          if (document.location.hash === '#/im') {
+          if (document.location.hash === '#/im' || $scope.curDialog.peer) {
             if (!$scope.curDialog.peer) {
               var MENU = document.getElementById('menu_button')
               MENU.click()
+              tabIndexMenu = -1
+              document.querySelectorAll('.nav_menu').forEach(function(i) {
+                i.style.backgroundColor = '#fff'
+              });
+            } else if ($scope.curDialog.peer) {
+              var ABOUT = document.getElementById('navbar-peer-wrap')
+              ABOUT.click()
             }
           }
           break;
         case 'ArrowUp':
           var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open")) {
+          if (MENU.classList.contains("open") && !$scope.curDialog.peer) {
+            var list = document.getElementById("ul_menu_nav")
+            var nav = document.querySelectorAll('.nav_menu')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndexMenu - 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move + 1]) {
+                nav[move + 1].style.backgroundColor = '#fff'
+              }
+              tabIndexMenu = move
+              list.scrollTop = (targetElement.offsetTop - 130)
+            }
             break
           }
           if (document.location.hash === '#/im') {
@@ -675,7 +713,23 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           break
         case 'ArrowDown':
           var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open")) {
+          if (MENU.classList.contains("open") && !$scope.curDialog.peer) {
+            var list = document.getElementById("ul_menu_nav")
+            var nav = document.querySelectorAll('.nav_menu')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndexMenu + 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move - 1]) {
+                nav[move - 1].style.backgroundColor = '#fff'
+              }
+              tabIndexMenu = move
+              list.scrollTop = (targetElement.offsetTop - 130)
+            }
             break
           }
           if (document.location.hash === '#/im') {
@@ -772,6 +826,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           pendingAttachment = peerData.attachment
         }
         if ($routeParams.p != peer) {
+          console.log('/im?p=' + peer);
           $location.url('/im?p=' + peer)
         } else {
           updateCurDialog()

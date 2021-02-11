@@ -3509,8 +3509,10 @@ angular.module('myApp.directives', ['myApp.filters'])
       if (element[0].tagName == 'A' && !attrs.noOpen) {
         element.on('click', function (e) {
           if (peerID > 0) {
+            console.log('AppUsersManager.openUser')
             AppUsersManager.openUser(peerID, attrs.userOverride && $scope.$eval(attrs.userOverride))
           } else {
+            console.log('AppChatsManager.openChat')
             AppChatsManager.openChat(-peerID)
           }
         })
