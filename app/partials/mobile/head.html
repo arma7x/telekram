@@ -291,10 +291,16 @@
         </ul>
       </div>
 
-      <div class="softkey">
-        <span class="left"><i class="icon-search" style="margin-top:6px;"></i></span>
+      <div class="softkey" ng-if="!curDialog.peer">
+        <span class="left"><i class="icon-search" style="margin-top:5px;"></i></span>
         <span class="center">SELECT</span>
         <span class="right">Menu</span>
+      </div>
+
+      <div class="softkey" ng-if="curDialog.peer">
+        <span class="left"><i class="icon icon-mic" style="margin-top:0px;"></i></span>
+        <span class="center">MESSAGE</span>
+        <span class="right"><i class="icon icon-paperclip" style="margin-top:0px;"></i></span>
       </div>
     </div>
   </div>

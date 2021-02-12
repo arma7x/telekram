@@ -51,7 +51,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     })
 
     var CountrySelectModalControllerStatus = false
-    var SendCodeConfirmModalStatus = false;
     var modal;
     var options = {dcID: 2, createNetworker: true}
     var countryChanged = false
@@ -76,19 +75,26 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             break;
         }
         return
-      } else if (SendCodeConfirmModalStatus) {
-        console.log('SendCodeConfirmModalStatus', e.key);
-        switch (e.key) {
-          case 'End':
-          case 'Backspace':
-          case 'EndCall':
-            e.preventDefault()
-            break;
+      } else if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1]
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.preventDefault()
+              MODAL.dismiss()
+              break;
+            case 'Home':
+            case 'SoftRight':
+              MODAL.close()
+              break;
+            case 'Enter':
+              MODAL.close()
+              break;
+          }
+          return
         }
-        return
-      } else if (window['ErrorServiceStatus']) {
-        e.preventDefault()
-        return
       }
       console.log('AppLoginController keydownListener', e.key);
       switch (e.key) {
@@ -340,8 +346,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         return
       }
 
-      SendCodeConfirmModalStatus = true
-
       var modalErrorService = ErrorService.confirm({
         type: 'LOGIN_PHONE_CORRECT',
         country_code: $scope.credentials.phone_country,
@@ -382,7 +386,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
               break
           }
         })['finally'](function () {
-          SendCodeConfirmModalStatus = false
           if ($rootScope.idle.isIDLE || tsNow() - authKeyStarted > 60000) {
             NotificationsManager.notify({
               title: 'Telegram',
@@ -391,8 +394,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             })
           }
         })
-      }).finally(function() {
-        SendCodeConfirmModalStatus = false
       })
     }
 
@@ -635,6 +636,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
               e.preventDefault()
               MODAL.dismiss()
               break;
+            case 'Home':
+            case 'SoftRight':
+              MODAL.close()
+              break;
+            case 'Enter':
+              MODAL.close()
+              break;
           }
           return
         }
@@ -642,8 +650,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       switch (e.key) {
         case 'Insert':
         case 'SoftLeft':
-          var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open")) {
+          if ($scope.curDialog.peer) {
+            // send record audio
             break
           }
           if (document.location.hash === '#/im') {
@@ -666,6 +674,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 i.style.backgroundColor = '#fff'
               });
             } else if ($scope.curDialog.peer) {
+              // send attachment
               var ABOUT = document.getElementById('navbar-peer-wrap')
               ABOUT.click()
             }
@@ -682,13 +691,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             var move = tabIndexMenu - 1
             var targetElement = nav[move]
             if (targetElement !== undefined) {
-              targetElement.focus()
+              //targetElement.focus()
               targetElement.style.backgroundColor = '#c0c0c0'
               if (nav[move + 1]) {
                 nav[move + 1].style.backgroundColor = '#fff'
               }
               tabIndexMenu = move
               list.scrollTop = (targetElement.offsetTop - 130)
+            }
+            break
+          } else if ($scope.curDialog.peer) {
+            var im_history_wrap = document.getElementById('im_history_wrap')
+            if (im_history_wrap) {
+              im_history_wrap.scrollTop -= 30
             }
             break
           }
@@ -701,7 +716,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             var move = tabIndex - 1
             var targetElement = nav[move]
             if (targetElement !== undefined) {
-              targetElement.focus()
+              //targetElement.focus()
               targetElement.style.backgroundColor = '#c0c0c0'
               if (nav[move + 1]) {
                 nav[move + 1].style.backgroundColor = '#fff'
@@ -722,13 +737,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             var move = tabIndexMenu + 1
             var targetElement = nav[move]
             if (targetElement !== undefined) {
-              targetElement.focus()
+              //targetElement.focus()
               targetElement.style.backgroundColor = '#c0c0c0'
               if (nav[move - 1]) {
                 nav[move - 1].style.backgroundColor = '#fff'
               }
               tabIndexMenu = move
               list.scrollTop = (targetElement.offsetTop - 130)
+            }
+            break
+          } else if ($scope.curDialog.peer) {
+            var im_history_wrap = document.getElementById('im_history_wrap')
+            if (im_history_wrap) {
+              im_history_wrap.scrollTop += 30
             }
             break
           }
@@ -741,7 +762,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             var move = tabIndex + 1
             var targetElement = nav[move]
             if (targetElement !== undefined) {
-              targetElement.focus()
+              //targetElement.focus()
               targetElement.style.backgroundColor = '#c0c0c0'
               if (nav[move - 1]) {
                 nav[move - 1].style.backgroundColor = '#fff'
@@ -752,8 +773,12 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           }
           break
         case 'Enter':
-          var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open")) {
+          if ($scope.curDialog.peer) {
+            var composer_rich_textarea = document.getElementsByClassName('composer_rich_textarea')
+            console.log(composer_rich_textarea);
+            if (composer_rich_textarea) {
+              composer_rich_textarea[0].focus()
+            }
             break
           }
           if (document.location.hash === '#/im') {
@@ -761,6 +786,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             var targetElement = nav[tabIndex]
             if (targetElement) {
               var mousedown = new Event('mousedown')
+              nav[tabIndex].style.backgroundColor = '#fff'
+              tabIndex = -1;
               targetElement.children[0].dispatchEvent(mousedown)
             }
           }
@@ -775,6 +802,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             e.preventDefault()
             e.stopPropagation()
             break
+          } else if ($scope.curDialog.peer) {
+            if (document.activeElement.className === 'composer_rich_textarea') {
+              document.activeElement.blur()
+              e.preventDefault()
+              e.stopPropagation()
+              break
+            }
           }
           if (document.location.hash !== '#/im') {
             e.preventDefault()
@@ -800,6 +834,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     var pendingParams = false
     var pendingAttachment = false
     $scope.$on('history_focus', function (e, peerData) {
+      console.log('history_focus');
       if (peerData.peerString == $scope.curDialog.peer &&
           (peerData.messageID ? peerData.messageID == $scope.curDialog.messageID : !$scope.curDialog.messageID) &&
           !peerData.startParam &&
@@ -986,8 +1021,10 @@ angular.module('myApp.controllers', ['myApp.i18n'])
 
     $scope.showPeerInfo = function () {
       if ($scope.curDialog.peerID > 0) {
+        console.log('AppUsersManager.openUser')
         AppUsersManager.openUser($scope.curDialog.peerID)
       } else if ($scope.curDialog.peerID < 0) {
+        console.log('AppChatsManager.openChat')
         AppChatsManager.openChat(-$scope.curDialog.peerID)
       }
     }
@@ -5728,7 +5765,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           var move = tabIndex - 1
           var targetElement = nav[move]
           if (targetElement !== undefined) {
-            targetElement.focus()
+            //targetElement.focus()
             targetElement.style.backgroundColor = '#c0c0c0'
             if (nav[move + 1]) {
               nav[move + 1].style.backgroundColor = '#fff'
@@ -5750,7 +5787,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           var move = tabIndex + 1
           var targetElement = nav[move]
           if (targetElement !== undefined) {
-            targetElement.focus()
+            //targetElement.focus()
             targetElement.style.backgroundColor = '#c0c0c0'
             if (nav[move - 1]) {
               nav[move - 1].style.backgroundColor = '#fff'

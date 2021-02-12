@@ -1,3 +1,9 @@
+<style>
+.im_send_field_wrap {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+</style>
 <form class="im_send_form" ng-class="{im_send_form_empty: !draftMessage.text.length && draftMessage.type != 'edit', composer_progress_enabled: draftMessage.inlineProgress, im_voice_recording: voiceRecorder.recording, im_processing_recording: voiceRecorder.processing}">
 
   <div class="im_send_reply_wrap" ng-if="draftMessage.replyToMsgID > 0">
@@ -39,16 +45,22 @@
       <textarea ng-model="draftMessage.text" class="form-control im_message_field no_outline" dir="auto" ng-trim="false"></textarea>
     </div>
 
+<!--
     <div class="im_attach pull-left">
       <input type="file" class="im_attach_input" size="28" multiple="true" title="{{'im_media_attach_title' | i18n}}" />
       <i class="icon icon-paperclip"></i>
     </div>
+-->
+<!--
 
     <div class="im_record pull-right" title="{{'im_voice_record_title' | i18n}}">
       <i class="icon icon-mic"></i>
     </div>
+-->
 
+<!--
     <button type="submit" class="btn btn-success im_submit"></button>
+-->
   </div>
 
 

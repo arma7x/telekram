@@ -297,6 +297,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
 
     function openUser (userID, override) {
+      console.log('openUser');
       var scope = $rootScope.$new()
       scope.userID = userID
       scope.override = override || {}
@@ -836,6 +837,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
 
     function openChat (chatID, accessHash) {
+      console.log('openChat');
       var scope = $rootScope.$new()
       scope.chatID = chatID
 
@@ -4387,7 +4389,6 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
   .service('ErrorService', function ($rootScope, $modal, $window) {
     var shownBoxes = 0
-    window['ErrorServiceStatus'] = false
 
     function show (params, options) {
       if (shownBoxes >= 1) {
@@ -4406,43 +4407,17 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         windowClass: options.windowClass || 'error_modal_window'
       })
 
+      modal.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push(modal);
+
       modal.result['finally'](function () {
         shownBoxes--
       })
-
-      var keydownListener = function(e) {
-        console.log('ErrorService.alert keydownListener', shownBoxes);
-        switch (e.key) {
-          case 'Home':
-          case 'SoftRight':
-            modal.close()
-            break;
-          case 'End':
-          case 'Backspace':
-          case 'EndCall':
-            modal.dismiss()
-            break;
-          case 'Enter':
-            modal.close()
-            break;
-        }
-      }
-
-      var _init = function() {
-        window['ErrorServiceStatus'] = true
-        console.log('ErrorService.alert $onInit');
-        document.addEventListener('keydown', keydownListener);
-      };
-
-      modal.result.finally(function() {
-        window['ErrorServiceStatus'] = false
-        console.log('ErrorService.alert $onDestroy');
-        document.removeEventListener('keydown', keydownListener);
-      });
-
-      modal.opened.then(function() {
-        _init()
-      });
 
       return modal
     }
@@ -4467,39 +4442,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         windowClass: options.windowClass || 'confirm_modal_window'
       })
 
-      var keydownListener = function(e) {
-        console.log('ErrorService.confirm keydownListener', shownBoxes);
-        switch (e.key) {
-          case 'Home':
-          case 'SoftRight':
-            modal.close()
-            break;
-          case 'End':
-          case 'Backspace':
-          case 'EndCall':
-            modal.dismiss()
-            break;
-          case 'Enter':
-            modal.close()
-            break;
-        }
-      }
-
-      var _init = function() {
-        window['ErrorServiceStatus'] = true
-        console.log('ErrorService.confirm $onInit');
-        document.addEventListener('keydown', keydownListener);
-      };
-
       modal.result.finally(function() {
-        window['ErrorServiceStatus'] = false
-        console.log('ErrorService.confirm $onDestroy');
-        document.removeEventListener('keydown', keydownListener);
-      });
-
-      modal.opened.then(function() {
-        _init()
-      });
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push(modal);
 
       return modal.result
     }
