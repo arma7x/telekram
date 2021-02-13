@@ -3,6 +3,10 @@
   margin-right: 5px;
   margin-left: 5px;
 }
+.composer_rich_textarea,
+.composer_textarea {
+    padding-right: 6px;
+}
 </style>
 <form class="im_send_form" ng-class="{im_send_form_empty: !draftMessage.text.length && draftMessage.type != 'edit', composer_progress_enabled: draftMessage.inlineProgress, im_voice_recording: voiceRecorder.recording, im_processing_recording: voiceRecorder.processing}">
 
@@ -33,7 +37,9 @@
     </div>
 
     <div class="im_send_field_wrap" ng-class="replyKeyboard._ == 'replyKeyboardMarkup' ? 'im_send_field_wrap_2ndbtn' : ''">
+<!--
       <a class="composer_emoji_insert_btn pull-right"><i class="icon icon-emoji"></i></a>
+-->
       <a class="composer_command_btn" ng-show="!replyKeyboard && commands.list.length > 0 && (!draftMessage.text.length || draftMessage.text[0] == '/')" ng-mousedown="draftMessage.toggleSlash($event)" ng-class="draftMessage.text[0] == '/' ? 'active' : ''"><i class="icon icon-slash"></i></a>
       <a class="composer_keyboard_btn" ng-show="replyKeyboard._ == 'replyKeyboardMarkup'" ng-mousedown="draftMessage.replyKeyboardToggle($event)" ng-class="!replyKeyboard.pFlags.hidden ? 'active' : ''"><i class="icon icon-keyboard"></i></a>
 
@@ -45,18 +51,14 @@
       <textarea ng-model="draftMessage.text" class="form-control im_message_field no_outline" dir="auto" ng-trim="false"></textarea>
     </div>
 
-<!--
-    <div class="im_attach pull-left">
+    <div class="im_attach pull-left" style="height:0px;width:0px;visibility:hidden;">
       <input type="file" class="im_attach_input" size="28" multiple="true" title="{{'im_media_attach_title' | i18n}}" />
       <i class="icon icon-paperclip"></i>
     </div>
--->
-<!--
 
-    <div class="im_record pull-right" title="{{'im_voice_record_title' | i18n}}">
+    <div class="im_record pull-right" style="height:0px;width:0px;visibility:hidden;" title="{{'im_voice_record_title' | i18n}}">
       <i class="icon icon-mic"></i>
     </div>
--->
 
 <!--
     <button type="submit" class="btn btn-success im_submit"></button>

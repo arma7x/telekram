@@ -154,6 +154,18 @@
   .softkey .right {
     text-align: right;
   }
+  .icon-mic {
+    margin-top: 0px;
+    width: 25px;
+    height: 25px;
+    background-position: -9px -283px;
+  }
+  .icon-paperclip {
+    margin-top: 0px;
+    width: 25px;
+    height: 25px;
+    background-position: -12px -68px;
+  }
 </style>
 <div class="tg_page_head">
   <div class="navbar navbar-static-top  navbar-inverse" role="navigation" ng-class="{navbar_peer_not_selected: !curDialog.peer, navbar_offline: offline, navbar_history_select: historyState.selectActions}">
@@ -297,10 +309,16 @@
         <span class="right">Menu</span>
       </div>
 
-      <div class="softkey" ng-if="curDialog.peer">
-        <span class="left"><i class="icon icon-mic" style="margin-top:0px;"></i></span>
+      <div class="softkey" ng-if="curDialog.peer &amp;&amp; !isComposerFocus">
+        <span class="left"><i class="icon icon-mic" ng-style="isRecordingAudio ? { borderRadius: '50%', backgroundColor: 'white' } : {}"></i></span>
         <span class="center">MESSAGE</span>
-        <span class="right"><i class="icon icon-paperclip" style="margin-top:0px;"></i></span>
+        <span class="right"><i class="icon icon-paperclip"></i></span>
+      </div>
+
+      <div class="softkey" ng-if="curDialog.peer &amp;&amp; isComposerFocus">
+        <span class="left"><i class="icon icon-emoji" style="margin-top:0px;"></i></span>
+        <span class="center">SEND</span>
+        <span class="right"></span>
       </div>
     </div>
   </div>

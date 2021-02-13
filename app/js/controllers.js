@@ -648,10 +648,32 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         }
       }
       switch (e.key) {
+        case 'Delete':
+        case 'Call':
+          if ($scope.curDialog.peer && !$scope.isComposerFocus && !$scope.isRecordingAudio) {
+            var ABOUT = document.getElementById('navbar-peer-wrap')
+            ABOUT.click()
+            break
+          }
+          break;
         case 'Insert':
         case 'SoftLeft':
           if ($scope.curDialog.peer) {
-            // send record audio
+            if ($scope.isComposerFocus) {
+              // Composer FOCUS
+            } else {
+              var start = new Event('touchstart')
+              var move = new Event('touchmove')
+              var stop = new Event('touchend')
+              if ($scope.isRecordingAudio) {
+                $scope.isRecordingAudio = false
+                $('.im_record')[0].dispatchEvent(move)
+                $('.im_record')[0].dispatchEvent(stop)
+              } else {
+                $scope.isRecordingAudio = true
+                $('.im_record')[0].dispatchEvent(start)
+              }
+            }
             break
           }
           if (document.location.hash === '#/im') {
@@ -674,9 +696,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 i.style.backgroundColor = '#fff'
               });
             } else if ($scope.curDialog.peer) {
+              if ($scope.isComposerFocus) {
+                // Composer FOCUS
+              } else {
+                if (!$scope.isRecordingAudio) {
+                  document.getElementsByClassName('im_attach_input')[0].click()
+                }
+              }
               // send attachment
-              var ABOUT = document.getElementById('navbar-peer-wrap')
-              ABOUT.click()
             }
           }
           break;
@@ -775,8 +802,17 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'Enter':
           if ($scope.curDialog.peer) {
             var composer_rich_textarea = document.getElementsByClassName('composer_rich_textarea')
-            console.log(composer_rich_textarea);
+            function _focus() {
+              $scope.isComposerFocus = true
+            }
+            function _blur() {
+              $scope.isComposerFocus = false
+              composer_rich_textarea[0].removeEventListener('focus', _focus)
+              composer_rich_textarea[0].removeEventListener('blur', _blur)
+            }
             if (composer_rich_textarea) {
+              composer_rich_textarea[0].addEventListener('focus', _focus)
+              composer_rich_textarea[0].addEventListener('blur', _blur)
               composer_rich_textarea[0].focus()
             }
             break
@@ -875,6 +911,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       })
     })
 
+    $scope.isComposerFocus = false
+    $scope.isRecordingAudio = false
     $scope.isLoggedIn = true
     $scope.isEmpty = {}
     $scope.search = {}

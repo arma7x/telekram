@@ -1817,6 +1817,7 @@ angular.module('myApp.directives', ['myApp.filters'])
         }
 
         voiceRecorder = new Recorder({
+          streamOptions: true,
           monitorGain: 0,
           numberOfChannels: 1,
           bitRate: 64000,
@@ -1839,6 +1840,9 @@ angular.module('myApp.directives', ['myApp.filters'])
           })
         }
         voiceRecorder.addEventListener('start', onRecordStart)
+        voiceRecorder.addEventListener('streamError', function(_e) {
+          console.log(_e.error);
+        })
 
         onRecordStreamReady = function(e) {
           recInited = true
@@ -1848,7 +1852,7 @@ angular.module('myApp.directives', ['myApp.filters'])
           }
           voiceRecorder.start()
         }
-        voiceRecorder.addEventListener('streamReady', onRecordStreamReady)
+        voiceRecorder.addEventListener('streamReady', onRecordStreamReady) // HERE
 
         voiceRecorder.initStream()
 
@@ -1888,11 +1892,14 @@ angular.module('myApp.directives', ['myApp.filters'])
         updateVoiceHoveredClass(event)
 
         onRecordStop = function(event) {
-          $($window).off(voiceRecordEvents.move, updateVoiceHoveredClass)
-          $($window).off(voiceRecordEvents.stop, onRecordStop)
+          //$($window).off(voiceRecordEvents.move, updateVoiceHoveredClass)
+          //$($window).off(voiceRecordEvents.stop, onRecordStop)
+          $(voiceRecordBtn).off(voiceRecordEvents.move, updateVoiceHoveredClass)
+          $(voiceRecordBtn).off(voiceRecordEvents.stop, onRecordStop)
+
 
           var isHover = event == 'blur' ? false : updateVoiceHoveredClass(event, true)
-
+          isHover = true
           if ($scope.voiceRecorder.duration > 0 && isHover) {
             $scope.voiceRecorder.processing = true
             voiceRecorder.addEventListener('dataAvailable', function(e) {
@@ -1920,8 +1927,11 @@ angular.module('myApp.directives', ['myApp.filters'])
           })
         }
 
-        $($window).on(voiceRecordEvents.move, updateVoiceHoveredClass)
-        $($window).one(voiceRecordEvents.stop, onRecordStop)
+        //$($window).on(voiceRecordEvents.move, updateVoiceHoveredClass)
+        //$($window).one(voiceRecordEvents.stop, onRecordStop)
+        $(voiceRecordBtn).on(voiceRecordEvents.move, updateVoiceHoveredClass)
+        $(voiceRecordBtn).one(voiceRecordEvents.stop, onRecordStop)
+
       })
 
       function voiceRecorderStop() {
