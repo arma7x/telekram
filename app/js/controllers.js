@@ -677,11 +677,16 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             break
           }
           if (document.location.hash === '#/im') {
-            var IMDP = document.getElementById('im_dialogs_panel')
-            if (IMDP.classList.contains("im_dialogs_panel_search")) {
-              $scope.searchClear()
+            var MENU_TOGGLE = document.getElementById('navbar-toggle-wrap')
+            if (MENU_TOGGLE.classList.contains("open")) {
+              
             } else {
-              $scope.toggleSearch()
+              var IMDP = document.getElementById('im_dialogs_panel')
+              if (IMDP.classList.contains("im_dialogs_panel_search")) {
+                $scope.searchClear()
+              } else {
+                $scope.toggleSearch()
+              }
             }
           }
           break;
@@ -689,12 +694,12 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'SoftRight':
           if (document.location.hash === '#/im' || $scope.curDialog.peer) {
             if (!$scope.curDialog.peer) {
+              tabIndexMenu = -1
+              for (var i=0;i<document.querySelectorAll('.nav_menu').length;i++) {
+                document.querySelectorAll('.nav_menu')[i].style.backgroundColor = '#fff'
+              }
               var MENU = document.getElementById('menu_button')
               MENU.click()
-              tabIndexMenu = -1
-              document.querySelectorAll('.nav_menu').forEach(function(i) {
-                i.style.backgroundColor = '#fff'
-              });
             } else if ($scope.curDialog.peer) {
               if ($scope.isComposerFocus) {
                 // Composer FOCUS
@@ -708,8 +713,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           }
           break;
         case 'ArrowUp':
-          var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open") && !$scope.curDialog.peer) {
+          var MENU_TOGGLE  = document.getElementById('navbar-toggle-wrap')
+          if (MENU_TOGGLE.classList.contains("open") && !$scope.curDialog.peer) {
             var list = document.getElementById("ul_menu_nav")
             var nav = document.querySelectorAll('.nav_menu')
             if (nav.length === 0) {
@@ -754,8 +759,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           }
           break
         case 'ArrowDown':
-          var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open") && !$scope.curDialog.peer) {
+          var MENU_TOGGLE = document.getElementById('navbar-toggle-wrap')
+          if (MENU_TOGGLE.classList.contains("open") && !$scope.curDialog.peer) {
             var list = document.getElementById("ul_menu_nav")
             var nav = document.querySelectorAll('.nav_menu')
             if (nav.length === 0) {
@@ -831,8 +836,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'End':
         case 'Backspace':
         case 'EndCall':
-          var MENU = document.getElementById('navbar-toggle-wrap')
-          if (MENU.classList.contains("open")) {
+          var MENU_TOGGLE = document.getElementById('navbar-toggle-wrap')
+          var IMDP = document.getElementById('im_dialogs_panel')
+          if (IMDP.classList.contains("im_dialogs_panel_search")) {
+            $scope.searchClear()
+            e.preventDefault()
+            e.stopPropagation()
+            break
+          } else if (MENU_TOGGLE.classList.contains("open")) {
             var MENU = document.getElementById('menu_button')
             MENU.click()
             e.preventDefault()

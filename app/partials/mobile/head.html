@@ -182,14 +182,15 @@
           <span class="icon-bar"></span>
 -->
         </a>
-        <ul id="ul_menu_nav" ng-switch-when="true" class="dropdown-menu" style="margin:0;right:0;width:240px;height:238px;">
+        <ul id="ul_menu_nav" ng-switch-when="true" class="dropdown-menu" style="margin:0;right:0;width:240px;max-height:236px;overflow-y:scroll;">
           <li class="nav_menu"><a ng-click="openGroup()" my-i18n="head_new_group"></a></li>
           <li class="nav_menu"><a ng-click="importContact()" my-i18n="head_new_contact"></a></li>
           <li class="nav_menu" ng-if="!isEmpty.contacts"><a ng-click="openContacts()" my-i18n="head_contacts"></a></li>
           <li class="nav_menu"><a ng-click="openSettings()" my-i18n="head_settings"></a></li>
           <li class="nav_menu"><a ng-click="logOut()" my-i18n="head_log_out"></a></li>
         </ul>
-        <ul id="ul_dialog_nav" ng-switch-default class="dropdown-menu" style="position:static;margin:0;right:0;width:240px;height:238px;">
+        <!-- position:static; -->
+        <ul id="ul_dialog_nav" ng-switch-default class="dropdown-menu" style="margin:0;right:0;width:240px;max-height:236px;overflow-y:scroll;">
           <li class="nav_dialog"><a ng-click="toggleEdit()" my-i18n="head_select_messages"></a></li>
           <li class="nav_dialog" ng-if="!historyFilter.mediaType" class="divider"></li>
           <li class="nav_dialog" ng-if="!historyFilter.mediaType"><a ng-click="toggleMedia('photos')" my-i18n="head_media_photos"></a></li>
