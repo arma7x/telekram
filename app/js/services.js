@@ -315,7 +315,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push(modalInstance);
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     function importContact (phone, firstName, lastName) {
@@ -855,7 +855,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         if (window['MODAL_STACK'] == null) {
           window['MODAL_STACK'] = []
         }
-        window['MODAL_STACK'].push(modalInstance);
+        window['MODAL_STACK'].push({ modal: modalInstance });
       } else {
         console.log('CHAT');
         var modalInstance = $modal.open({
@@ -870,7 +870,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         if (window['MODAL_STACK'] == null) {
           window['MODAL_STACK'] = []
         }
-        window['MODAL_STACK'].push(modalInstance);
+        window['MODAL_STACK'].push({ modal: modalInstance });
       }
     }
 
@@ -4413,7 +4413,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push(modal);
+      window['MODAL_STACK'].push({ modal: modal });
 
       modal.result['finally'](function () {
         shownBoxes--
@@ -4448,7 +4448,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push(modal);
+      window['MODAL_STACK'].push({ modal: modal });
 
       return modal.result
     }

@@ -77,7 +77,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         return
       } else if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
-          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1]
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
           switch (e.key) {
             case 'End':
             case 'Backspace':
@@ -628,7 +628,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       }
       if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
-          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1]
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
           switch (e.key) {
             case 'End':
             case 'Backspace':
