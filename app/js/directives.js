@@ -1885,7 +1885,7 @@ angular.module('myApp.directives', ['myApp.filters'])
             element.toggleClass('im_send_form_hover', isHover)
             curHover = isHover
           }
-          return returnHover && isHover
+          return returnHover // && isHover
         }
 
         updateVoiceHoverBoundaries()
@@ -1898,8 +1898,7 @@ angular.module('myApp.directives', ['myApp.filters'])
           $(voiceRecordBtn).off(voiceRecordEvents.stop, onRecordStop)
 
 
-          var isHover = event == 'blur' ? false : updateVoiceHoveredClass(event, true)
-          isHover = true
+          var isHover = event.type == 'blur' ? false : updateVoiceHoveredClass(event, true)
           if ($scope.voiceRecorder.duration > 0 && isHover) {
             $scope.voiceRecorder.processing = true
             voiceRecorder.addEventListener('dataAvailable', function(e) {

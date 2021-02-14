@@ -665,6 +665,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
               var start = new Event('touchstart')
               var move = new Event('touchmove')
               var stop = new Event('touchend')
+              var blur = new Event('blur')
               if ($scope.isRecordingAudio) {
                 $scope.isRecordingAudio = false
                 $('.im_record')[0].dispatchEvent(move)
@@ -850,11 +851,24 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             e.stopPropagation()
             break
           } else if ($scope.curDialog.peer) {
-            if (document.activeElement.className === 'composer_rich_textarea') {
+            if ($scope.isComposerFocus) {
               document.activeElement.blur()
               e.preventDefault()
               e.stopPropagation()
               break
+            } else {
+              var start = new Event('touchstart')
+              var move = new Event('touchmove')
+              //var stop = new Event('touchend')
+              var blur = new Event('blur')
+              if ($scope.isRecordingAudio) {
+                $scope.isRecordingAudio = false
+                $('.im_record')[0].dispatchEvent(move)
+                $('.im_record')[0].dispatchEvent(blur)
+                e.preventDefault()
+                e.stopPropagation()
+                break
+              }
             }
           }
           if (document.location.hash !== '#/im') {
