@@ -406,11 +406,21 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
 
     function openImportContact () {
-      return $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('import_contact_modal'),
         controller: 'ImportContactModalController',
         windowClass: 'md_simple_modal_window mobile_modal'
-      }).result.then(function (foundUserID) {
+      })
+      
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance })
+
+      return modalInstance.result.then(function (foundUserID) {
         if (!foundUserID) {
           return $q.reject()
         }
@@ -4439,7 +4449,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       var modal = $modal.open({
         templateUrl: templateUrl('confirm_modal'),
         scope: scope,
-        windowClass: options.windowClass || 'confirm_modal_window'
+        windowClass: options.windowClass || 'confirm_modal_window',
+        backdrop: 'single'
       })
 
       modal.result.finally(function() {
@@ -4531,13 +4542,120 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         scope.action = 'select'
       }
 
-      return $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('contacts_modal'),
         controller: 'ContactsModalController',
         scope: scope,
         windowClass: 'contacts_modal_window mobile_modal',
         backdrop: 'single'
-      }).result
+      })
+
+      var tabIndex = -1
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      modalInstance.opened.then(function() {
+        tabIndex = -1
+        // bg #fff
+      });
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+
+      window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e) {
+        console.log('ContactsSelectService keydownListener', e.key);
+        switch (e.key) {
+          case 'End':
+          case 'Backspace':
+          case 'EndCall':
+            e.preventDefault()
+            e.stopPropagation()
+            if (document.activeElement.tagName === 'INPUT') {
+              if (document.activeElement.value.length === 0) {
+                document.activeElement.blur()
+              }
+            } else {
+              modalInstance.dismiss()
+            }
+            break;
+          case 'Enter':
+            var nav = document.querySelectorAll('.contacts_modal_contact_wrap')
+            var targetElement = nav[tabIndex]
+            if (targetElement) {
+              targetElement.children[0].click();
+            }
+            break
+          case 'Insert':
+          case 'SoftLeft':
+            var INPUT = document.getElementById('contacts_modal_search_field')
+            if (INPUT) {
+              INPUT.focus()
+            }
+            break;
+          case 'ArrowUp':
+            var INPUT = document.getElementById('contacts_modal_search_field')
+            if (INPUT) {
+              INPUT.blur()
+            }
+            var list = document.getElementById("contacts_modal_col")
+            var nav = document.querySelectorAll('.contacts_modal_contact_wrap')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndex - 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              //targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move + 1]) {
+                nav[move + 1].style.backgroundColor = '#fff'
+              }
+              tabIndex = move
+              list.scrollTop = (targetElement.offsetTop - 100)
+            } else {
+              if (tabIndex > nav.length) {
+                tabIndex = 0
+                targetElement = nav[0]
+                targetElement.style.backgroundColor = '#c0c0c0'
+              } else {
+                console.log('!stuckkkkkkkkkkkkkkkkkkkkk');
+              }
+            }
+            break
+          case 'ArrowDown':
+            var INPUT = document.getElementById('contacts_modal_search_field')
+            if (INPUT) {
+              INPUT.blur()
+            }
+            var list = document.getElementById("contacts_modal_col")
+            var nav = document.querySelectorAll('.contacts_modal_contact_wrap')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndex + 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              //targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move - 1]) {
+                nav[move - 1].style.backgroundColor = '#fff'
+              }
+              tabIndex = move
+              list.scrollTop = (targetElement.offsetTop - 100)
+            } else {
+              if (tabIndex > nav.length) {
+                tabIndex = 0
+                targetElement = nav[0]
+                targetElement.style.backgroundColor = '#c0c0c0'
+              } else {
+                console.log('!stuckkkkkkkkkkkkkkkkkkkkk');
+              }
+            }
+            break
+        }
+      }});
+
+      return modalInstance.result
     }
 
     return {

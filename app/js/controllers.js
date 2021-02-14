@@ -254,7 +254,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
               tabIndex = move
               list.scrollTop = (targetElement.offsetTop - 100)
             } else {
-              if (nav.length === 1) {
+              if (tabIndex > nav.length) {
                 tabIndex = 0
                 targetElement = nav[0]
                 targetElement.style.backgroundColor = '#c0c0c0'
@@ -282,7 +282,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
               tabIndex = move
               list.scrollTop = (targetElement.offsetTop - 100)
             } else {
-              if (nav.length === 1) {
+              if (tabIndex > nav.length) {
                 tabIndex = 0
                 targetElement = nav[0]
                 targetElement.style.backgroundColor = '#c0c0c0'
@@ -697,13 +697,17 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     var tabIndexMenu = -1
 
     var keydownListener = function(e) {
-      console.log('AppIMController keydownListener');
       if (window['ErrorServiceStatus']) {
         e.preventDefault()
         return
       }
       if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            return
+          }
           var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
           switch (e.key) {
             case 'End':
@@ -723,6 +727,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           return
         }
       }
+      console.log('AppIMController keydownListener');
       switch (e.key) {
         case 'Delete':
         case 'Call':
@@ -900,6 +905,17 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             break
           }
           if (document.location.hash === '#/im') {
+            var MENU_TOGGLE = document.getElementById('navbar-toggle-wrap')
+            if (MENU_TOGGLE.classList.contains("open")) {
+              var nav = document.querySelectorAll('.nav_menu')
+              if (nav[tabIndexMenu]) {
+                var MENU = document.getElementById('menu_button')
+                MENU.click()
+                nav[tabIndexMenu].children[0].click()
+                tabIndexMenu = -1
+              }
+              break
+            }
             var nav = document.querySelectorAll('.im_dialog_wrap')
             var targetElement = nav[tabIndex]
             if (targetElement) {
@@ -1052,12 +1068,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     })
 
     $scope.openSettings = function () {
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('settings_modal'),
         controller: 'SettingsModalController',
         windowClass: 'settings_modal_window mobile_modal',
         backdrop: 'single'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.isHistoryPeerGroup = function () {
@@ -1104,13 +1127,20 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           var scope = $rootScope.$new()
           scope.userIDs = userIDs
 
-          $modal.open({
+          var modalInstance = $modal.open({
             templateUrl: templateUrl('chat_create_modal'),
             controller: 'ChatCreateModalController',
             scope: scope,
             windowClass: 'md_simple_modal_window mobile_modal',
             backdrop: 'single'
           })
+          modalInstance.result.finally(function() {
+            window['MODAL_STACK'].pop()
+          })
+          if (window['MODAL_STACK'] == null) {
+            window['MODAL_STACK'] = []
+          }
+          window['MODAL_STACK'].push({ modal: modalInstance });
         }
       })
     }

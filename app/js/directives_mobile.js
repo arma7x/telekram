@@ -350,7 +350,7 @@ angular.module('myApp.directives')
           height: $($window).height() -
             (panelWrap && panelWrap.offsetHeight || 0) -
             (searchWrap && searchWrap.offsetHeight || 0) -
-            64
+            58
         })
       }
 

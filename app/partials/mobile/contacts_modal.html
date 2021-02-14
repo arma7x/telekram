@@ -1,3 +1,49 @@
+<style>
+html {
+  background: white!important;
+}
+.contacts_modal_wrap {
+  
+}
+.tg_page_head .navbar-quick-nav {
+  height: 28px;
+}
+.tg_page_head .navbar-inverse .navbar-quick-nav > li > a {
+  font-size: 12px;
+  color: #fff;
+  padding: 5px 4px;
+  padding-left: 20px;
+  height: 28px;
+}
+.navbar-quick-nav .icon-back {
+  position: absolute;
+  margin-left: -15px;
+  margin-top: 0px;
+}
+.icon-back {
+  display: inline-block;
+  width: 11px;
+  height: 19px;
+  vertical-align: text-top;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-position: -15px -835px;
+}
+.navbar-quick-media-back h4 {
+  margin: 0px 0 0px 0;
+  line-height: normal;
+}
+.contacts_modal_window {
+  margin-bottom: 0px;
+  font-weight: normal;
+}
+.mobile_modal .modal-content {
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: 28px;
+  height: 100vh;
+}
+</style>
 <div class="contacts_modal_wrap">
 
   <div class="tg_page_head tg_modal_head">
@@ -66,14 +112,14 @@
   <div class="modal-body mobile_modal_body">
 
     <div class="contacts_modal_search">
-      <input class="form-control contacts_modal_search_field no_outline" my-focused type="search" placeholder="{{'modal_search' | i18n}}" ng-model="search.query"/>
+      <input id="contacts_modal_search_field" class="form-control contacts_modal_search_field no_outline" my-focused type="search" placeholder="{{'modal_search' | i18n}}" ng-model="search.query"/>
       <a class="im_dialogs_search_clear tg_search_clear" ng-click="search.query = ''" ng-show="search.query.length">
         <i class="icon icon-search-clear"></i>
       </a>
     </div>
 
 
-    <div class="contacts_modal_col contacts_wrap contacts_scrollable_wrap mobile_scrollable_wrap" my-contacts-list-mobile my-infinite-scroller-mobile>
+    <div id="contacts_modal_col" class="contacts_modal_col contacts_wrap contacts_scrollable_wrap mobile_scrollable_wrap" my-contacts-list-mobile my-infinite-scroller-mobile>
       <ul class="contacts_modal_members_list nav nav-pills nav-stacked">
 
         <li class="contacts_modal_contact_wrap clearfix" ng-repeat="contact in contacts | limitTo: slice.limit track by contact.userID" ng-class="{active: selectedContacts[contact.userID], disabled: disabledContacts[contact.userID]}">
@@ -91,6 +137,12 @@
         </li>
 
       </ul>
+    </div>
+
+    <div class="softkey">
+      <span class="left">Search</span>
+      <span class="center">SELECT</span>
+      <span class="right"></span>
     </div>
 
   </div>
