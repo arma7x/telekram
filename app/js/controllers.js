@@ -50,33 +50,18 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       WebPushApiManager.forceUnsubscribe()
     })
 
-    var CountrySelectModalControllerStatus = false
-    var modal;
     var options = {dcID: 2, createNetworker: true}
     var countryChanged = false
     var selectedCountry = false
 
     var keydownListener = function(e) {
-      if (CountrySelectModalControllerStatus) {
-        console.log('CountrySelectModalControllerStatus', e.key);
-        switch (e.key) {
-          case 'End':
-          case 'Backspace':
-          case 'EndCall':
-            e.preventDefault()
-            e.stopPropagation()
-            if (document.activeElement.tagName === 'INPUT') {
-              if (document.activeElement.value.length === 0) {
-                document.activeElement.blur()
-              }
-            } else {
-              modal.dismiss()
-            }
-            break;
-        }
-        return
-      } else if (window['MODAL_STACK']) {
+      if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            return
+          }
           var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
           switch (e.key) {
             case 'End':
@@ -101,10 +86,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'Insert':
         case 'SoftLeft':
           if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
-            //var OPENSMS = document.getElementById('openSMS')
-            //if (OPENSMS) {
-              //OPENSMS.click()
-            //}
             window.open('sms://+1')
             break;
           }
@@ -204,17 +185,112 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.about = {}
 
     $scope.chooseCountry = function () {
-      modal = $modal.open({
+      var modal = $modal.open({
         templateUrl: templateUrl('country_select_modal'),
         controller: 'CountrySelectModalController',
         windowClass: 'countries_modal_window mobile_modal',
         backdrop: 'single'
       })
 
-      modal.result.then(selectCountry).finally(function() {CountrySelectModalControllerStatus = false})
+      var tabIndex = -1
+      modal.result.then(selectCountry).finally(function() {
+        window['MODAL_STACK'].pop()
+      })
       modal.opened.then(function() {
-        CountrySelectModalControllerStatus = true
+        tabIndex = -1
+        // bg #fff
       });
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal, keydownListener: function(e) {
+        console.log('CountrySelectModalController keydownListener', e.key);
+        switch (e.key) {
+          case 'End':
+          case 'Backspace':
+          case 'EndCall':
+            e.preventDefault()
+            e.stopPropagation()
+            if (document.activeElement.tagName === 'INPUT') {
+              if (document.activeElement.value.length === 0) {
+                document.activeElement.blur()
+              }
+            } else {
+              modal.dismiss()
+            }
+            break;
+          case 'Enter':
+            var nav = document.querySelectorAll('.countries_modal_country_wrap')
+            var targetElement = nav[tabIndex]
+            if (targetElement) {
+              targetElement.children[0].click();
+            }
+            break
+          case 'Insert':
+          case 'SoftLeft':
+            var INPUT = document.getElementById('input_search_country')
+            if (INPUT) {
+              INPUT.focus()
+            }
+            break;
+          case 'ArrowUp':
+            var INPUT = document.getElementById('input_search_country')
+            if (INPUT) {
+              INPUT.blur()
+            }
+            var list = document.getElementById("countries_modal_col")
+            var nav = document.querySelectorAll('.countries_modal_country_wrap')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndex - 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              //targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move + 1]) {
+                nav[move + 1].style.backgroundColor = '#fff'
+              }
+              tabIndex = move
+              list.scrollTop = (targetElement.offsetTop - 100)
+            } else {
+              if (nav.length === 1) {
+                tabIndex = 0
+                targetElement = nav[0]
+                targetElement.style.backgroundColor = '#c0c0c0'
+              }
+            }
+            break
+          case 'ArrowDown':
+            var INPUT = document.getElementById('input_search_country')
+            if (INPUT) {
+              INPUT.blur()
+            }
+            var list = document.getElementById("countries_modal_col")
+            var nav = document.querySelectorAll('.countries_modal_country_wrap')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndex + 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              //targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move - 1]) {
+                nav[move - 1].style.backgroundColor = '#fff'
+              }
+              tabIndex = move
+              list.scrollTop = (targetElement.offsetTop - 100)
+            } else {
+              if (nav.length === 1) {
+                tabIndex = 0
+                targetElement = nav[0]
+                targetElement.style.backgroundColor = '#c0c0c0'
+              }
+            }
+            break
+        }
+      }});
     }
 
     function initPhoneCountry () {
@@ -5796,86 +5872,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.search = {}
     $scope.slice = {limit: 20, limitDelta: 20}
 
-    var tabIndex = -1
-
-    var keydownListener = function(e) {
-      console.log('CountrySelectModalController keydownListener');
-      switch (e.key) {
-        case 'Enter':
-          var nav = document.querySelectorAll('.countries_modal_country_wrap')
-          var targetElement = nav[tabIndex]
-          if (targetElement) {
-            targetElement.children[0].click();
-          }
-          break
-        case 'Insert':
-        case 'SoftLeft':
-          var INPUT = document.getElementById('input_search_country')
-          if (INPUT) {
-            INPUT.focus()
-          }
-          break;
-        case 'ArrowUp':
-          var INPUT = document.getElementById('input_search_country')
-          if (INPUT) {
-            INPUT.blur()
-          }
-          var list = document.getElementById("countries_modal_col")
-          var nav = document.querySelectorAll('.countries_modal_country_wrap')
-          if (nav.length === 0) {
-            return
-          }
-          var move = tabIndex - 1
-          var targetElement = nav[move]
-          if (targetElement !== undefined) {
-            //targetElement.focus()
-            targetElement.style.backgroundColor = '#c0c0c0'
-            if (nav[move + 1]) {
-              nav[move + 1].style.backgroundColor = '#fff'
-            }
-            tabIndex = move
-            list.scrollTop = (targetElement.offsetTop - 100)
-          }
-          break
-        case 'ArrowDown':
-          var INPUT = document.getElementById('input_search_country')
-          if (INPUT) {
-            INPUT.blur()
-          }
-          var list = document.getElementById("countries_modal_col")
-          var nav = document.querySelectorAll('.countries_modal_country_wrap')
-          if (nav.length === 0) {
-            return
-          }
-          var move = tabIndex + 1
-          var targetElement = nav[move]
-          if (targetElement !== undefined) {
-            //targetElement.focus()
-            targetElement.style.backgroundColor = '#c0c0c0'
-            if (nav[move - 1]) {
-              nav[move - 1].style.backgroundColor = '#fff'
-            }
-            tabIndex = move
-            list.scrollTop = (targetElement.offsetTop - 100)
-          }
-          break
-      }
-    }
-
     var _init = function() {
       console.log('CountrySelectModalController $onInit');
-      //var INPUT = document.getElementById('input_search_country')
-      //if (INPUT) {
-      //  INPUT.focus()
-      //}
-      document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
       console.log('CountrySelectModalController $onDestroy');
-      document.removeEventListener('keydown', keydownListener);
     });
 
     var searchIndex = SearchIndexManager.createIndex()
@@ -5888,7 +5892,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     $scope.$watch('search.query', function (newValue) {
-      tabIndex = -1
       var filtered = false
       var results = {}
 
