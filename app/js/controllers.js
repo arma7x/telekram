@@ -974,6 +974,9 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           if (document.location.hash !== '#/im') {
             e.preventDefault()
             e.stopPropagation()
+            if ('spatialNavigationEnabled' in navigator) {
+              navigator.spatialNavigationEnabled = false
+            }
             window.history.back()
           }
           break
