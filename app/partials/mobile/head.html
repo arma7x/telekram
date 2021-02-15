@@ -319,7 +319,10 @@
       <div class="softkey" ng-if="curDialog.peer &amp;&amp; isComposerFocus">
         <span class="left"><i class="icon icon-emoji" style="margin-top:0px;"></i></span>
         <span class="center">SEND</span>
-        <span class="right"></span>
+        <span class="right">
+          <i ng-show="!replyKeyboard && commands.list.length > 0 && (!draftMessage.text.length || draftMessage.text[0] == '/')" class="icon icon-slash"></i>
+          <i ng-show="replyKeyboard._ == 'replyKeyboardMarkup'" class="icon icon-keyboard"></i>
+        </span>
       </div>
     </div>
   </div>

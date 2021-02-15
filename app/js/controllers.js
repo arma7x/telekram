@@ -185,7 +185,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.about = {}
 
     $scope.chooseCountry = function () {
-      var modal = $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('country_select_modal'),
         controller: 'CountrySelectModalController',
         windowClass: 'countries_modal_window mobile_modal',
@@ -203,7 +203,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modal, keydownListener: function(e) {
+      window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e) {
         console.log('CountrySelectModalController keydownListener', e.key);
         switch (e.key) {
           case 'End':
@@ -697,6 +697,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     var tabIndexMenu = -1
 
     var keydownListener = function(e) {
+      if (e.key === '5' && !$scope.isComposerFocus && !$scope.isRecordingAudio && 'spatialNavigationEnabled' in navigator) {
+        if (navigator.spatialNavigationEnabled) {
+          navigator.spatialNavigationEnabled = false
+        } else {
+          navigator.spatialNavigationEnabled = true
+        }
+        return
+      }
       if (window['ErrorServiceStatus']) {
         e.preventDefault()
         return
@@ -1028,6 +1036,26 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       })
     })
 
+
+    $scope.draftMessage = {}
+    $scope.commands = {}
+    $scope.replyKeyboard = false
+
+    GE_INSTANCE.addGlobalListener(function(evt) {
+      // console.log(evt)
+      switch (evt.name) {
+        case 'draftMessage':
+          $scope.draftMessage = evt.data
+          break
+        case 'commands':
+          $scope.commands = evt.data
+          break
+        case 'historyState.replyKeyboard':
+          $scope.replyKeyboard = evt.data
+          break
+      }
+    })
+
     $scope.isComposerFocus = false
     $scope.isRecordingAudio = false
     $scope.isLoggedIn = true
@@ -1261,6 +1289,10 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.myResults = []
     $scope.foundPeers = []
     $scope.foundMessages = []
+
+    $scope.draftMessage = {}
+    $scope.commands = {}
+    $scope.replyKeyboard = false
 
     if ($scope.search === undefined) {
       $scope.search = {}
@@ -1840,6 +1872,20 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       toggleMedia(mediaType)
     })
 
+    $scope.$on('__draftMessage', function(_, val) {
+      //$scope.$parent.$emit('__draftMessage', val)
+      GE_INSTANCE.emit('draftMessage', val)
+    })
+    $scope.$on('__commands', function(_, val) {
+      //$scope.$parent.$emit('__commands', val)
+      GE_INSTANCE.emit('commands', val)
+    })
+    $scope.$watch('historyState.replyKeyboard', function(val) {
+      //$scope.$parent.$emit('__historyState.replyKeyboard', val)
+      GE_INSTANCE.emit('historyState.replyKeyboard', val)
+    })
+    
+    
     $scope.$on('history_return_recent', returnToRecent)
 
     var peerID
@@ -2277,6 +2323,9 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     function toggleMessage (messageID, $event) {
+      if ('spatialNavigationEnabled' in navigator) {
+        navigator.spatialNavigationEnabled = false
+      }
       if ($scope.historyState.botActions ||
         $rootScope.idle.afterFocus) {
         return false
@@ -2334,39 +2383,124 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           $scope.historyState.canEdit = AppMessagesManager.canEditMessage(messageID)
           $scope.historyState.canReport = AppMessagesManager.canReportMessage(messageID)
 
-          $modal.open({
+          var modalInstance = $modal.open({
             templateUrl: templateUrl('message_actions_modal'),
             windowClass: 'message_actions_modal_window',
             scope: $scope.$new()
-          }).result.then(function (action) {
+          })
+
+          modalInstance.result.then(function (action) {
+            window['MODAL_STACK'].pop()
             switch (action) {
               case 'reply':
-                selectedReply(messageID)
+                selectedReply(messageID) // TODO
                 break
 
               case 'edit':
-                selectedEdit(messageID)
+                selectedEdit(messageID) // TODO
                 break
 
               case 'delete':
-                selectedDelete(messageID)
+                selectedDelete(messageID) // TODO
                 break
 
               case 'forward':
-                selectedForward(messageID)
+                selectedForward(messageID) // TODO
                 break
 
               case 'report':
-                selectedReport(messageID)
+                selectedReport(messageID) // TODO
                 break
 
               case 'select':
                 $scope.historyState.selectActions = 'selected'
                 $scope.$broadcast('ui_panel_update')
-                toggleMessage(messageID)
+                toggleMessage(messageID) // TODO
                 break
             }
           })
+          var tabIndex = -1
+          modalInstance.result.finally(function() {
+            if ('spatialNavigationEnabled' in navigator) {
+              navigator.spatialNavigationEnabled = false
+            }
+          })
+          if (window['MODAL_STACK'] == null) {
+            window['MODAL_STACK'] = []
+          }
+          window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e) {
+            console.log('AppImHistoryController keydownListener', e.key);
+            if (window['ErrorServiceStatus']) {
+              e.preventDefault()
+              return
+            }
+            switch (e.key) {
+              case 'End':
+              case 'Backspace':
+              case 'EndCall':
+                e.preventDefault()
+                e.stopPropagation()
+                modalInstance.dismiss()
+                break;
+              case 'Enter':
+                var nav = document.getElementsByClassName('message_actions_wrap')[0].children
+                var targetElement = nav[tabIndex]
+                if (targetElement) {
+                  targetElement.click()
+                  modalInstance.dismiss()
+                }
+                break
+              case 'ArrowUp':
+                var list = document.getElementById("message_actions_modal_wrap")
+                var nav = document.getElementsByClassName('message_actions_wrap')[0].children
+                if (nav.length === 0) {
+                  return
+                }
+                var move = tabIndex - 1
+                var targetElement = nav[move]
+                if (targetElement !== undefined) {
+                  //targetElement.focus()
+                  targetElement.style.backgroundColor = '#c0c0c0'
+                  if (nav[move + 1]) {
+                    nav[move + 1].style.backgroundColor = '#fff'
+                  }
+                  tabIndex = move
+                  list.scrollTop = (targetElement.offsetTop - 100)
+                } else {
+                  if (tabIndex > nav.length) {
+                    tabIndex = 0
+                    targetElement = nav[0]
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                  }
+                }
+                break
+              case 'ArrowDown':
+                var list = document.getElementById("message_actions_modal_wrap")
+                var nav = document.getElementsByClassName('message_actions_wrap')[0].children
+                if (nav.length === 0) {
+                  return
+                }
+                var move = tabIndex + 1
+                var targetElement = nav[move]
+                if (targetElement !== undefined) {
+                  //targetElement.focus()
+                  targetElement.style.backgroundColor = '#c0c0c0'
+                  if (nav[move - 1]) {
+                    nav[move - 1].style.backgroundColor = '#fff'
+                  }
+                  tabIndex = move
+                  list.scrollTop = (targetElement.offsetTop - 100)
+                } else {
+                  if (tabIndex > nav.length) {
+                    tabIndex = 0
+                    targetElement = nav[0]
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                  }
+                }
+                break
+            }
+          }});
+
           return false
         }
       }
@@ -2496,6 +2630,9 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           isSupergroup: isMegagroup,
           isUsualGroup: isUsualGroup
         }, {}, { revoke: false }).then(function (data) {
+          if (!data) {
+            data = { revoke: false }
+          }
           AppMessagesManager.deleteMessages(selectedMessageIDs, data.revoke).then(function () {
             selectedCancel()
           })
@@ -3043,6 +3180,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.$watch('draftMessage.sticker', onStickerSelected)
     $scope.$watch('draftMessage.command', onCommandSelected)
     $scope.$watch('draftMessage.inlineResultID', onInlineResultSelected)
+
+    $scope.$watch('draftMessage.text', function() {
+      $scope.$parent.$emit('__draftMessage', $scope.draftMessage)
+    })
+    $scope.$watch('commands.list', function(val) {
+      $scope.$parent.$emit('__commands', $scope.commands)
+    })
 
     $scope.$on('history_reply_markup', function (e, peerData) {
       if (peerData.peerID == $scope.curDialog.peerID) {

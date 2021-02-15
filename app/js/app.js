@@ -13,6 +13,47 @@ if (Config.Modes.animations) {
   extraModules.push('ngAnimate')
 }
 
+var GLOBAL_EVENT = (function() {
+
+  function GLOBAL_EVENT() {
+    this.init();
+  }
+
+  GLOBAL_EVENT.prototype.init = function() {
+    this.globalListener = [];
+  }
+
+  GLOBAL_EVENT.prototype.addGlobalListener = function(cb) {
+    if (typeof cb !== 'function') {
+      return false;
+    }
+    this.globalListener.push(cb);
+  }
+
+  GLOBAL_EVENT.prototype.removeGlobalListener = function(cb) {
+    if (typeof cb !== 'function') {
+      return false;
+    }
+    const index = this.globalListener.indexOf(cb);
+    if (index > -1) {
+      this.globalListener.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+
+  GLOBAL_EVENT.prototype.emit = function(name, data) {
+    this.globalListener.forEach(function(listener) {
+      listener({ name: name, data: data });
+    });
+  }
+
+  return GLOBAL_EVENT;
+
+})();
+
+var GE_INSTANCE = new GLOBAL_EVENT({})
+
 // Declare app level module which depends on filters, and services
 angular.module('myApp', [
   'ngRoute',

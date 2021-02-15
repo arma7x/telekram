@@ -547,11 +547,21 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
 
     function openPhonebookImport () {
-      return $modal.open({
+      var modal = $modal.open({
         templateUrl: templateUrl('phonebook_modal'),
         controller: 'PhonebookModalController',
         windowClass: 'phonebook_modal_window mobile_modal'
       })
+
+      modal.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal });
+
+      return modal
     }
 
     function getPhonebookContacts () {
@@ -1711,6 +1721,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         scope: scope,
         windowClass: 'photo_modal_window'
       })
+
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     function downloadPhoto (photoID) {
@@ -1861,13 +1879,21 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       scope.webpageID = webpageID
       scope.messageID = messageID
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('embed_modal'),
         windowTemplateUrl: templateUrl('media_modal_layout'),
         controller: 'EmbedModalController',
         scope: scope,
         windowClass: 'photo_modal_window'
       })
+
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     function wrapForHistory (webPageID) {
@@ -1973,13 +1999,21 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       scope.messageID = messageID
       scope.embedUrl = embedUrl
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('game_modal'),
         windowTemplateUrl: templateUrl('media_modal_layout'),
         controller: 'GameModalController',
         scope: scope,
         windowClass: 'photo_modal_window mobile_modal'
       })
+
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     function wrapForHistory (gameID) {
@@ -2318,6 +2352,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         scope: scope,
         windowClass: 'document_modal_window'
       })
+
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     function saveDocFile (docID) {
@@ -2369,13 +2411,23 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       scope.docID = docID
       scope.messageID = messageID
 
-      return $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('video_modal'),
         windowTemplateUrl: templateUrl('media_modal_layout'),
         controller: 'VideoModalController',
         scope: scope,
         windowClass: 'video_modal_window'
       })
+
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
+
+      return modalInstance
     }
 
     return {
@@ -2750,6 +2802,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         scope: scope,
         windowClass: 'stickerset_modal_window mobile_modal'
       })
+
+      modal.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal });
     }
 
     function getStickerSetsHash (stickerSets) {
@@ -3896,12 +3956,20 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     $rootScope.$on('push_notification_click', function (e, notificationData) {
       if (notificationData.action == 'push_settings') {
         topMessagesPromise.then(function () {
-          $modal.open({
+          var modal = $modal.open({
             templateUrl: templateUrl('settings_modal'),
             controller: 'SettingsModalController',
             windowClass: 'settings_modal_window mobile_modal',
             backdrop: 'single'
           })
+
+          modal.result.finally(function() {
+            window['MODAL_STACK'].pop()
+          })
+          if (window['MODAL_STACK'] == null) {
+            window['MODAL_STACK'] = []
+          }
+          window['MODAL_STACK'].push({ modal: modal });
         })
         return
       }
@@ -4492,13 +4560,23 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         angular.extend(scope, options)
       }
 
-      return $modal.open({
+      var modal = $modal.open({
         templateUrl: templateUrl('peer_select'),
         controller: 'PeerSelectController',
         scope: scope,
         windowClass: 'peer_select_window mobile_modal',
         backdrop: 'single'
-      }).result
+      })
+
+      modal.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal });
+
+      return modal.result
     }
 
     function selectPeers (options) {
@@ -4516,13 +4594,23 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         angular.extend(scope, options)
       }
 
-      return $modal.open({
+      var modal = $modal.open({
         templateUrl: templateUrl('peer_select'),
         controller: 'PeerSelectController',
         scope: scope,
         windowClass: 'peer_select_window mobile_modal',
         backdrop: 'single'
-      }).result
+      })
+
+      modal.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal });
+
+      return modal.result
     }
 
     return {
@@ -4709,12 +4797,20 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       var $scope = $rootScope.$new()
       $scope.lastVersion = lastVersion
 
-      $modal.open({
+      var modal = $modal.open({
         controller: 'ChangelogModalController',
         templateUrl: templateUrl('changelog_modal'),
         scope: $scope,
         windowClass: 'changelog_modal_window mobile_modal'
       })
+
+      modal.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal });
     }
 
     return {

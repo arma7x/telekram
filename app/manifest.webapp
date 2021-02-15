@@ -25,6 +25,7 @@
     "serviceworker-notification": "/index.html"
   }],
   "permissions": {
+    "spatialnavigation-app-manage": {},
     "serviceworker": {
       "description": "Needed for assocating service worker"
     },
