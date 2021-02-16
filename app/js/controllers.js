@@ -697,7 +697,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     var tabIndexMenu = -1
 
     var keydownListener = function(e) {
-      if (e.key === '5' && !$scope.isComposerFocus && !$scope.isRecordingAudio && 'spatialNavigationEnabled' in navigator) {
+      if (e.key === '5' && $scope.curDialog.peer && !$scope.isComposerFocus && !$scope.isRecordingAudio && 'spatialNavigationEnabled' in navigator) {
         if (navigator.spatialNavigationEnabled) {
           navigator.spatialNavigationEnabled = false
         } else {
@@ -3929,6 +3929,62 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   })
 
   .controller('PhotoModalController', function ($q, $scope, $rootScope, $modalInstance, AppPhotosManager, AppMessagesManager, AppPeersManager, AppWebPagesManager, PeersSelectService, ErrorService) {
+
+    var keydownListener = function(e) {
+      console.log('PhotoModalController keydownListener', e.key);
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.preventDefault()
+              MODAL.dismiss()
+              break;
+            case 'Home':
+            case 'SoftRight':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope['delete']()
+              break;
+            case 'Delete':
+            case 'Call':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope.download()
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope.forward()
+              break;
+            case 'Enter':
+              MODAL.close()
+              break;
+          }
+          return
+        }
+      }
+    }
+    
+    var _init = function() {
+      console.log('PhotoModalController $onInit');
+      document.activeElement.addEventListener('keydown', keydownListener);
+    };
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('PhotoModalController $onDestroy');
+      document.activeElement.removeEventListener('keydown', keydownListener);
+    });
+
     $scope.photo = AppPhotosManager.wrapForFull($scope.photoID)
     $scope.nav = {}
 

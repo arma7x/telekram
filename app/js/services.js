@@ -1723,12 +1723,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
 
       modalInstance.result.finally(function() {
-        window['MODAL_STACK'].pop()
+        //window['MODAL_STACK'].pop()
+      })
+      modalInstance.result.then(function() {
+        //window['MODAL_STACK'].pop()
       })
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modalInstance });
+      window['MODAL_STACK'].push({ modal: modalInstance, name: 'photo_modal' });
     }
 
     function downloadPhoto (photoID) {
