@@ -169,14 +169,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
 
     var _init = function() {
       console.log('AppLoginController $onInit');
-      document.activeElement.addEventListener('keydown', keydownListener);
+      document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
       console.log('AppLoginController $onDestroy');
-      document.activeElement.removeEventListener('keydown', keydownListener);
+      document.removeEventListener('keydown', keydownListener);
     });
 
     $scope.credentials = {phone_country: '', phone_country_name: '', phone_number: '', phone_full: ''}
@@ -193,10 +193,10 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       })
 
       var tabIndex = -1
-      modal.result.then(selectCountry).finally(function() {
+      modalInstance.result.then(selectCountry).finally(function() {
         window['MODAL_STACK'].pop()
       })
-      modal.opened.then(function() {
+      modalInstance.opened.then(function() {
         tabIndex = -1
         // bg #fff
       });
@@ -258,6 +258,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 tabIndex = 0
                 targetElement = nav[0]
                 targetElement.style.backgroundColor = '#c0c0c0'
+              } else {
+                console.log('stuck');
               }
             }
             break
@@ -286,6 +288,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 tabIndex = 0
                 targetElement = nav[0]
                 targetElement.style.backgroundColor = '#c0c0c0'
+              } else {
+                console.log('stuck');
               }
             }
             break
@@ -401,7 +405,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         id: result.user.id
       })
       $timeout.cancel(nextTimeout)
-
       $location.url('/im')
     }
 
@@ -844,7 +847,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 nav[move + 1].style.backgroundColor = '#fff'
               }
               tabIndex = move
-              list.scrollTop = (targetElement.offsetTop - 130)
+              list.scrollTop = (targetElement.offsetTop - 80)
             }
           }
           break
@@ -865,7 +868,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 nav[move - 1].style.backgroundColor = '#fff'
               }
               tabIndexMenu = move
-              list.scrollTop = (targetElement.offsetTop - 130)
+              list.scrollTop = (targetElement.offsetTop - 80)
             }
             break
           } else if ($scope.curDialog.peer) {
@@ -985,14 +988,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
 
     var _init = function() {
       console.log('AppIMController $onInit');
-      document.activeElement.addEventListener('keydown', keydownListener);
+      document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
       console.log('AppIMController $onDestroy');
-      document.activeElement.removeEventListener('keydown', keydownListener);
+      document.removeEventListener('keydown', keydownListener);
     });
 
     var pendingParams = false
@@ -1514,6 +1517,11 @@ angular.module('myApp.controllers', ['myApp.i18n'])
 
     $scope.importPhonebook = function () {
       PhonebookContactsService.openPhonebookImport()
+    }
+
+    $scope.searchClear = function () {
+      $scope.search.query = ''
+      $scope.$broadcast('search_clear')
     }
 
     $scope.setSearchPeer = function (peerID) {
@@ -3976,13 +3984,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     
     var _init = function() {
       console.log('PhotoModalController $onInit');
-      document.activeElement.addEventListener('keydown', keydownListener);
+      document.addEventListener('keydown', keydownListener);
     };
     _init();
 
     $scope.$on('$destroy', function() {
       console.log('PhotoModalController $onDestroy');
-      document.activeElement.removeEventListener('keydown', keydownListener);
+      document.removeEventListener('keydown', keydownListener);
     });
 
     $scope.photo = AppPhotosManager.wrapForFull($scope.photoID)

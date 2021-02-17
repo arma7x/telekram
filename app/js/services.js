@@ -4571,13 +4571,110 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         backdrop: 'single'
       })
 
+      var tabIndex = -1
       modal.result.finally(function() {
         window['MODAL_STACK'].pop()
       })
+      modal.opened.then(function() {
+        tabIndex = -1
+        // bg #fff
+      });
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modal });
+      window['MODAL_STACK'].push({ modal: modal, keydownListener: function(e) {
+        console.log('PeersSelectService keydownListener', e.key);
+        switch (e.key) {
+          case 'End':
+          case 'Backspace':
+          case 'EndCall':
+            e.preventDefault()
+            e.stopPropagation()
+            if (document.activeElement.tagName === 'INPUT') {
+              if (document.activeElement.value.length === 0) {
+                document.activeElement.blur()
+              }
+            } else {
+              modal.dismiss()
+            }
+            break;
+          case 'Enter':
+            var nav = document.querySelectorAll('.im_dialog_wrap_forward')
+            var targetElement = nav[tabIndex]
+            if (targetElement) {
+              var mousedown = new Event('mousedown')
+              targetElement.children[0].dispatchEvent(mousedown)
+            }
+            break
+          case 'Insert':
+          case 'SoftLeft':
+            var INPUT = document.getElementById('im_dialogs_search_field')
+            if (INPUT) {
+              INPUT.focus()
+            }
+            break;
+          case 'ArrowUp':
+            var INPUT = document.getElementById('im_dialogs_search_field')
+            if (INPUT) {
+              INPUT.blur()
+            }
+            var list = document.getElementById("my-dialogs-list-mobile")
+            var nav = document.querySelectorAll('.im_dialog_wrap_forward')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndex - 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              //targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move + 1]) {
+                nav[move + 1].style.backgroundColor = '#fff'
+              }
+              tabIndex = move
+              list.scrollTop = (targetElement.offsetTop - 100)
+            } else {
+              if (tabIndex > nav.length) {
+                tabIndex = 0
+                targetElement = nav[0]
+                targetElement.style.backgroundColor = '#c0c0c0'
+              } else {
+                console.log('!stuckkkkkkkkkkkkkkkkkkkkk');
+              }
+            }
+            break
+          case 'ArrowDown':
+            var INPUT = document.getElementById('im_dialogs_search_field')
+            if (INPUT) {
+              INPUT.blur()
+            }
+            var list = document.getElementById("my-dialogs-list-mobile")
+            var nav = document.querySelectorAll('.im_dialog_wrap_forward')
+            if (nav.length === 0) {
+              return
+            }
+            var move = tabIndex + 1
+            var targetElement = nav[move]
+            if (targetElement !== undefined) {
+              //targetElement.focus()
+              targetElement.style.backgroundColor = '#c0c0c0'
+              if (nav[move - 1]) {
+                nav[move - 1].style.backgroundColor = '#fff'
+              }
+              tabIndex = move
+              list.scrollTop = (targetElement.offsetTop - 100)
+            } else {
+              if (tabIndex > nav.length) {
+                tabIndex = 0
+                targetElement = nav[0]
+                targetElement.style.backgroundColor = '#c0c0c0'
+              } else {
+                console.log('!stuckkkkkkkkkkkkkkkkkkkkk');
+              }
+            }
+            break
+        }
+      } });
 
       return modal.result
     }
