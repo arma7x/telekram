@@ -3954,6 +3954,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             case 'EndCall':
               e.preventDefault()
               MODAL.dismiss()
+              window['MODAL_STACK'].pop()
               break;
             case 'Home':
             case 'SoftRight':
