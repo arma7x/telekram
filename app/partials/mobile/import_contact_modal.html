@@ -8,6 +8,15 @@
   box-shadow: none;
   padding-top: 28px;
 }
+
+.mobile_modal .modal-content .modal-body {
+  padding: 5px;
+}
+
+.modal_simple_form {
+  max-width: 276px;
+  margin: 0 auto;
+}
 </style>
 <div class="import_modal_wrap">
 
@@ -19,7 +28,7 @@
 
           <ul class="nav navbar-nav navbar-quick-nav">
             <li class="navbar-quick-right">
-              <a ng-class="{disabled: progress.enabled}" ng-click="doImport()" ng-bind="progress.enabled ? 'contact_import_modal_submit_active' : 'contact_import_modal_submit' | i18n" ng-disabled="progress.enabled"></a>
+              <a id="doImport" ng-class="{disabled: progress.enabled}" ng-click="doImport()" ng-bind="progress.enabled ? 'contact_import_modal_submit_active' : 'contact_import_modal_submit' | i18n" ng-disabled="progress.enabled"></a>
             </li>
             <li>
               <a ng-click="$dismiss()" class="navbar-quick-media-back">

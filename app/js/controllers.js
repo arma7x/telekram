@@ -700,7 +700,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     var tabIndexMenu = -1
 
     var keydownListener = function(e) {
-      if (e.key === '5' && $scope.curDialog.peer && !$scope.isComposerFocus && !$scope.isRecordingAudio && 'spatialNavigationEnabled' in navigator) {
+      if (e.key === '5' && $scope.curDialog.peer && !$scope.isComposerFocus && !$scope.isRecordingAudio && 'spatialNavigationEnabled' in navigator && window['MODAL_STACK'].length === 0) {
         if (navigator.spatialNavigationEnabled) {
           navigator.spatialNavigationEnabled = false
         } else {
@@ -2728,12 +2728,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         })
       }
       if (selectedMessageIDs.length) {
-        $modal.open({
+        var modalInstance = $modal.open({
           templateUrl: templateUrl('report_msgs_modal'),
           controller: 'ReportMessagesModalController',
           windowClass: 'md_simple_modal_window mobile_modal',
           scope: $scope.$new()
-        }).result.then(function (inputReason) {
+        })
+
+        modalInstance.result.then(function (inputReason) {
           selectedCancel()
           AppMessagesManager.reportMessages(selectedMessageIDs, inputReason).then(function () {
             var toastData = toaster.pop({
@@ -2747,7 +2749,15 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             })
           })
         })
-      }
+
+        modalInstance.result.finally(function() {
+          window['MODAL_STACK'].pop()
+        })
+        if (window['MODAL_STACK'] == null) {
+          window['MODAL_STACK'] = []
+        }
+        window['MODAL_STACK'].push({ modal: modalInstance });
+        }
     }
 
     function selectedReply (selectedMessageID) {
@@ -4627,16 +4637,26 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         last_name: $scope.user.last_name
       }
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl(edit ? 'edit_contact_modal' : 'import_contact_modal'),
         controller: 'ImportContactModalController',
         windowClass: 'md_simple_modal_window mobile_modal',
         scope: scope
-      }).result.then(function (foundUserID) {
+      })
+
+      modalInstance.result.then(function (foundUserID) {
         if ($scope.userID == foundUserID) {
           $scope.user = AppUsersManager.getUser($scope.userID)
         }
       })
+
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.deleteContact = function () {
@@ -4799,12 +4819,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       var scope = $rootScope.$new()
       scope.chatID = $scope.chatID
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('chat_invite_link_modal'),
         controller: 'ChatInviteLinkModalController',
         scope: scope,
         windowClass: 'md_simple_modal_window'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.photo = {}
@@ -4843,12 +4870,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       var scope = $rootScope.$new()
       scope.chatID = $scope.chatID
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('chat_edit_modal'),
         controller: 'ChatEditModalController',
         scope: scope,
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.hasRights = function (action) {
@@ -4970,12 +5004,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       var scope = $rootScope.$new()
       scope.chatID = $scope.chatID
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('chat_invite_link_modal'),
         controller: 'ChatInviteLinkModalController',
         scope: scope,
         windowClass: 'md_simple_modal_window'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
 
       return cancelEvent($event)
     }
@@ -5016,12 +5057,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       var scope = $rootScope.$new()
       scope.chatID = $scope.chatID
 
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl($scope.isMegagroup ? 'megagroup_edit_modal' : 'channel_edit_modal'),
         controller: 'ChannelEditModalController',
         scope: scope,
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.goToHistory = function () {
@@ -5104,16 +5152,31 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         controller: 'PasswordUpdateModalController',
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modal.result.finally(function() {
+        updatePasswordState()
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modal });
 
-      modal.result['finally'](updatePasswordState)
+      //modal.result['finally'](updatePasswordState)
     }
 
     $scope.showSessions = function () {
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('sessions_list_modal'),
         controller: 'SessionsListModalController',
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     function updatePasswordState () {
@@ -5190,19 +5253,33 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     $scope.editProfile = function () {
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('profile_edit_modal'),
         controller: 'ProfileEditModalController',
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.changeUsername = function () {
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('username_edit_modal'),
         controller: 'UsernameEditModalController',
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
 
     $scope.terminateSessions = function () {
@@ -5363,11 +5440,18 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     $scope.changeUsername = function () {
-      $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: templateUrl('username_edit_modal'),
         controller: 'UsernameEditModalController',
         windowClass: 'md_simple_modal_window mobile_modal'
       })
+      modalInstance.result.finally(function() {
+        window['MODAL_STACK'].pop()
+      })
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
+      window['MODAL_STACK'].push({ modal: modalInstance });
     }
   })
 
@@ -6076,6 +6160,84 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     if ($scope.importContact === undefined) {
       $scope.importContact = {}
     }
+
+    var tabIndex = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              if (document.activeElement.tagName === 'INPUT') {
+                if (document.activeElement.value.length === 0) {
+                  document.activeElement.blur()
+                  e.preventDefault()
+                }
+              } else {
+                MODAL.dismiss()
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              $scope.doImport();
+              break;
+            case 'Enter':
+              $scope.doImport();
+              break;
+            case 'ArrowUp':
+              var nav = document.getElementsByClassName('form-control input-lg')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex - 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.focus()
+                tabIndex = move
+              }
+              break
+            case 'ArrowDown':
+              var nav = document.getElementsByClassName('form-control input-lg')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex + 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.focus()
+                tabIndex = move
+              }
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('ImportContactModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('ImportContactModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
 
     $scope.phonebookAvailable = PhonebookContactsService.isAvailable()
 
