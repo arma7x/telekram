@@ -418,7 +418,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modalInstance })
+      window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e) {} })
 
       return modalInstance.result.then(function (foundUserID) {
         if (!foundUserID) {
@@ -3965,8 +3965,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             windowClass: 'settings_modal_window mobile_modal',
             backdrop: 'single'
           })
-
+          modal.opened.then(function() {
+            if ('spatialNavigationEnabled' in navigator) {
+              navigator.spatialNavigationEnabled = true
+            }
+          });
           modal.result.finally(function() {
+            if ('spatialNavigationEnabled' in navigator) {
+              navigator.spatialNavigationEnabled = false
+            }
             window['MODAL_STACK'].pop()
           })
           if (window['MODAL_STACK'] == null) {

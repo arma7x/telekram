@@ -1108,13 +1108,21 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         windowClass: 'settings_modal_window mobile_modal',
         backdrop: 'single'
       })
+      modalInstance.opened.then(function() {
+        if ('spatialNavigationEnabled' in navigator) {
+          //navigator.spatialNavigationEnabled = true
+        }
+      });
       modalInstance.result.finally(function() {
+        if ('spatialNavigationEnabled' in navigator) {
+          //navigator.spatialNavigationEnabled = false
+        }
         window['MODAL_STACK'].pop()
       })
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modalInstance });
+      window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e){}, name: 'settings_modal' });
     }
 
     $scope.isHistoryPeerGroup = function () {
@@ -4208,6 +4216,62 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       location: AppPhotosManager.choosePhotoSize($scope.photo, 0, 0).location
     }
 
+    var keydownListener = function(e) {
+      console.log('UserpicModalController keydownListener', e.key);
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.preventDefault()
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              break;
+            case 'Home':
+            case 'SoftRight':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope['delete']()
+              break;
+            case 'Delete':
+            case 'Call':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope.download()
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope.forward()
+              break;
+            case 'Enter':
+              MODAL.close()
+              break;
+          }
+          return
+        }
+      }
+    }
+    
+    var _init = function() {
+      console.log('UserpicModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('UserpicModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
+
     $scope.nav = {}
     $scope.canForward = true
 
@@ -4398,6 +4462,62 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.photo.thumb = {
       location: AppPhotosManager.choosePhotoSize($scope.photo, 0, 0).location
     }
+
+    var keydownListener = function(e) {
+      console.log('ChatpicModalController keydownListener', e.key);
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.preventDefault()
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              break;
+            case 'Home':
+            case 'SoftRight':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope['delete']()
+              break;
+            case 'Delete':
+            case 'Call':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope.download()
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              MODAL.dismiss()
+              window['MODAL_STACK'].pop()
+              $scope.forward()
+              break;
+            case 'Enter':
+              MODAL.close()
+              break;
+          }
+          return
+        }
+      }
+    }
+    
+    var _init = function() {
+      console.log('ChatpicModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('ChatpicModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
 
     var chat = AppChatsManager.getChat($scope.chatID)
     var isChannel = AppChatsManager.isChannel($scope.chatID)
@@ -4656,7 +4776,11 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modalInstance });
+      var objModal = { modal: modalInstance }
+      if (!edit) {
+        objModal.keydownListener = function(e) {}
+      }
+      window['MODAL_STACK'].push(objModal);
     }
 
     $scope.deleteContact = function () {
@@ -5082,6 +5206,107 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   })
 
   .controller('SettingsModalController', function ($rootScope, $scope, $timeout, $modal, AppUsersManager, AppChatsManager, AppPhotosManager, MtpApiManager, Storage, NotificationsManager, MtpApiFileManager, PasswordManager, ApiUpdatesManager, ChangelogNotifyService, LayoutSwitchService, WebPushApiManager, AppRuntimeManager, ErrorService, _) {
+
+    var tabIndex = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+          } else {
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              if (document.activeElement.tagName === 'INPUT') {
+                if (document.activeElement.value.length === 0) {
+                  document.activeElement.blur()
+                  e.preventDefault()
+                }
+              } else {
+                MODAL.dismiss()
+                e.preventDefault()
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              //
+              break;
+            case 'Enter':
+              var nav = document.getElementsByClassName('nav_setting')
+              var targetElement = nav[tabIndex]
+              if (targetElement !== undefined) {
+                console.log(targetElement)
+                targetElement.click()
+              }
+              e.stopPropagation()
+              e.preventDefault()
+              break;
+            case 'ArrowUp':
+              e.preventDefault()
+              var list = document.getElementById("setting_container")
+              var nav = document.getElementsByClassName('nav_setting')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex - 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.parentNode.style.backgroundColor = '#c0c0c0'
+                tabIndex = move
+                var prev = tabIndex + 1
+                if (nav[prev]) {
+                  nav[prev].parentNode.style.backgroundColor = 'transparent'
+                }
+                list.scrollTop = (targetElement.offsetTop - 100)
+              }
+              break
+            case 'ArrowDown':
+              e.preventDefault()
+              var list = document.getElementById("setting_container")
+              var nav = document.getElementsByClassName('nav_setting')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex + 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.parentNode.style.backgroundColor = '#c0c0c0'
+                tabIndex = move
+                var prev = tabIndex - 1
+                if (nav[prev]) {
+                  nav[prev].parentNode.style.backgroundColor = 'transparent'
+                }
+                list.scrollTop = (targetElement.offsetTop - 100)
+              }
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('SettingsModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('SettingsModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
 
     $scope.profile = {}
     $scope.photo = {}
@@ -6173,7 +6398,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
           if (modalKeydownListener && typeof modalKeydownListener === 'function') {
             modalKeydownListener(e)
-            return
+            //return
           }
           var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
           switch (e.key) {
@@ -6188,6 +6413,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 }
               } else {
                 MODAL.dismiss()
+                e.preventDefault()
               }
               break;
             case 'Home':

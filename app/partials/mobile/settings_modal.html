@@ -9,7 +9,7 @@
   padding-top: 28px;
 }
 </style>
-<div class="settings_modal_wrap">
+<div id="setting_container" style="max-height:242px;overflow:hidden;" class="settings_modal_wrap">
 
   <div class="tg_page_head tg_modal_head">
     <div class="navbar navbar-static-top navbar-inverse">
@@ -70,7 +70,7 @@
 
     <div class="mobile_user_modal_photo_profile_wrap">
 
-      <a ng-click="openUserPic()"  class="mobile_user_modal_image_wrap pull-left" my-peer-photolink="::profile.id" img-class="mobile_user_modal_image" no-open="true" watch="true" ng-class="{disabled: !profile.photo.photo_id}" ng-disabled="!profile.photo.photo_id"></a>
+      <a ng-click="openUserPic()"  class="mobile_user_modal_image_wrap pull-left nav_setting" my-peer-photolink="::profile.id" img-class="mobile_user_modal_image" no-open="true" watch="true" ng-class="{disabled: !profile.photo.photo_id}" ng-disabled="!profile.photo.photo_id"></a>
 
       <div class="mobile_user_modal_info_wrap clearfix">
         <h4 class="mobile_user_modal_header" my-peer-link="profile.id"></h4>
@@ -91,42 +91,42 @@
     </div>
 
     <div class="mobile_modal_action_wrap">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="toggleDesktop()" ng-class="notify.desktop ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="toggleDesktop()" ng-class="notify.desktop ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_notification_alert"></span>
       </a>
     </div>
 
     <div ng-if="notify.desktop && notify.pushAvailable" class="mobile_modal_action_wrap">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="togglePush()" ng-class="notify.push ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="togglePush()" ng-class="notify.push ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_notification_push"></span>
       </a>
     </div>
 
     <div class="mobile_modal_action_wrap">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="togglePreview()" ng-class="notify.preview ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="togglePreview()" ng-class="notify.preview ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_message_preview"></span>
       </a>
     </div>
 
     <div class="mobile_modal_action_wrap" ng-if="!notify.desktop &amp;&amp; notify.canVibrate">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="toggleVibrate()" ng-class="notify.vibrate ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="toggleVibrate()" ng-class="notify.vibrate ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_vibrate"></span>
       </a>
     </div>
 
     <div class="mobile_modal_action_wrap">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="toggleSound()" ng-class="notify.volume ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="toggleSound()" ng-class="notify.volume ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_sounds"></span>
       </a>
     </div>
 
     <div class="mobile_modal_action_wrap">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="toggleCtrlEnter(send.enter == 1 ? 0 : 1)" ng-class="send.enter == 1 ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="toggleCtrlEnter(send.enter == 1 ? 0 : 1)" ng-class="send.enter == 1 ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_send_on_enter"></span>
       </a>
@@ -143,7 +143,7 @@
     </div>
 
     <div class="mobile_modal_action_wrap" ng-show="contentSettings.pFlags.sensitive_can_change">
-      <a class="mobile_modal_action tg_checkbox clearfix" ng-click="toggleContentSettings()" ng-class="contentSettings.pFlags.sensitive_enabled ? 'tg_checkbox_on' : ''">
+      <a class="mobile_modal_action tg_checkbox clearfix nav_setting" ng-click="toggleContentSettings()" ng-class="contentSettings.pFlags.sensitive_enabled ? 'tg_checkbox_on' : ''">
         <span class="icon icon-checkbox-outer"><i class="icon-checkbox-inner"></i></span>
         <span class="tg_checkbox_label" my-i18n="settings_modal_show_sensitive_content"></span>
       </a>
@@ -157,14 +157,14 @@
     <div class="mobile_modal_section">
       <h4 class="mobile_modal_section_header" my-i18n="user_modal_username"></h4>
       <div class="mobile_modal_section_value" ng-click="changeUsername()" ng-switch="profile.username.length > 0">
-        <a class="settings_modal_username_link" ng-switch-when="true" href="" ng-click="changeUsername()" ng-bind="'@' + profile.username"></a>
-        <a ng-switch-default href="" ng-click="changeUsername()" my-i18n="settings_modal_empty_username_set"></a>
+        <a class="settings_modal_username_link nav_setting" ng-switch-when="true" href="" ng-click="changeUsername()" ng-bind="'@' + profile.username"></a>
+        <a class="nav_setting" ng-switch-default href="" ng-click="changeUsername()" my-i18n="settings_modal_empty_username_set"></a>
       </div>
     </div>
 
     <div class="mobile_modal_section" ng-if="switchBackToDesktop">
       <div class="mobile_modal_section_value">
-        <a href="" ng-click="switchToDesktop()" my-i18n="settings_switch_back_to_desktop"></a>
+        <a class="nav_setting" href="" ng-click="switchToDesktop()" my-i18n="settings_switch_back_to_desktop"></a>
       </div>
     </div>
 
