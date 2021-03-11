@@ -15,13 +15,13 @@
     <div class="navbar navbar-static-top navbar-inverse">
       <div class="container">
 
-        <div class="navbar-toggle-wrap dropdown" dropdown>
-          <a class="dropdown-toggle navbar-toggle" dropdown-toggle>
+        <div id="settings_dropdown" class="navbar-toggle-wrap dropdown" dropdown>
+          <a id="settings_dropdown_toggle" class="dropdown-toggle navbar-toggle" dropdown-toggle>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <ul class="dropdown-menu">
+          <ul id="settings_dropdown_menu" class="dropdown-menu">
             <li ng-if="photo.location">
               <a ng-click="deletePhoto()" my-i18n="settings_modal_delete_photo"></a>
             </li>
@@ -157,8 +157,8 @@
     <div class="mobile_modal_section">
       <h4 class="mobile_modal_section_header" my-i18n="user_modal_username"></h4>
       <div class="mobile_modal_section_value" ng-click="changeUsername()" ng-switch="profile.username.length > 0">
-        <a class="settings_modal_username_link nav_setting" ng-switch-when="true" href="" ng-click="changeUsername()" ng-bind="'@' + profile.username"></a>
-        <a class="nav_setting" ng-switch-default href="" ng-click="changeUsername()" my-i18n="settings_modal_empty_username_set"></a>
+        <a class="settings_modal_username_link nav_setting" ng-switch-when="true" href="" ng-click="" ng-bind="'@' + profile.username"></a>
+        <a class="nav_setting" ng-switch-default href="" ng-click="" my-i18n="settings_modal_empty_username_set"></a>
       </div>
     </div>
 

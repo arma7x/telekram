@@ -1,3 +1,17 @@
+<style>
+.navbar-quick-media-back h4 {
+  margin: 0px 0 0px 0;
+  line-height: normal;
+}
+.mobile_modal .modal-content .modal-body {
+  padding: 5px;
+}
+.modal_simple_form {
+  max-width: 276px;
+  margin: 10px 0px!important;
+  padding: 10px 10px; */
+}
+</style>
 <div class="username_edit_modal_wrap">
 
   <div class="tg_page_head tg_modal_head">
@@ -31,7 +45,7 @@
     <form class="modal_simple_form" ng-submit="updateUsername()" my-vertical-position="0.3">
 
       <div class="form-group import_modal_field_wrap" ng-class="{'has-error': checked.error, 'has-feedback': checked.feedback.length > 0}">
-        <input class="form-control input-md" my-focused type="text" placeholder="{{'username_edit_placeholder' | i18n}}" ng-model="profile.username"  name="username" ng-model-options="{updateOn: 'default blur', debounce: {default: 600, blur: 0}}"/>
+        <input id="edit_username_input" class="form-control input-md" my-focused type="text" placeholder="{{'username_edit_placeholder' | i18n}}" ng-model="profile.username"  name="username" ng-model-options="{updateOn: 'default blur', debounce: {default: 600, blur: 0}}"/>
         <span ng-if="checked.error" class="glyphicon form-control-feedback" ng-class="{'glyphicon-remove': checked.error}"></span>
       </div>
 

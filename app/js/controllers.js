@@ -5208,6 +5208,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   .controller('SettingsModalController', function ($rootScope, $scope, $timeout, $modal, AppUsersManager, AppChatsManager, AppPhotosManager, MtpApiManager, Storage, NotificationsManager, MtpApiFileManager, PasswordManager, ApiUpdatesManager, ChangelogNotifyService, LayoutSwitchService, WebPushApiManager, AppRuntimeManager, ErrorService, _) {
 
     var tabIndex = -1
+    var tabIndexDD = -1
 
     var keydownListener = function(e) {
       if (window['ErrorServiceStatus']) {
@@ -5218,7 +5219,9 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         if (window['MODAL_STACK'].length > 0) {
           var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
           if (modalKeydownListener && typeof modalKeydownListener === 'function') {
-            modalKeydownListener(e)
+            if (modalKeydownListener(e) === true) {
+              return
+            }
           } else {
             return
           }
@@ -5228,66 +5231,137 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             case 'Backspace':
             case 'EndCall':
               e.stopPropagation()
-              if (document.activeElement.tagName === 'INPUT') {
-                if (document.activeElement.value.length === 0) {
-                  document.activeElement.blur()
+              var dd = document.getElementById('settings_dropdown')
+              if (dd.classList.contains('open')) {
+                tabIndexDD = -1
+                var ddl = document.getElementById('settings_dropdown_menu')
+                for (var i in ddl.children) {
+                  if (ddl.children[i].style) {
+                    ddl.children[i].style.backgroundColor = 'transparent'
+                  }
+                }
+                dd.click()
+                e.preventDefault()
+              } else {
+                if (document.activeElement.tagName === 'INPUT') {
+                  if (document.activeElement.value.length === 0) {
+                    document.activeElement.blur()
+                    e.preventDefault()
+                  }
+                } else {
+                  MODAL.dismiss()
                   e.preventDefault()
                 }
-              } else {
-                MODAL.dismiss()
-                e.preventDefault()
               }
               break;
             case 'Home':
             case 'SoftRight':
-              //
+              tabIndexDD = -1
+              var ddl = document.getElementById('settings_dropdown_menu')
+              for (var i in ddl.children) {
+                if (ddl.children[i].style) {
+                  ddl.children[i].style.backgroundColor = 'transparent'
+                }
+              }
+              var ddt = document.getElementById('settings_dropdown_toggle')
+              ddt.click()
               break;
             case 'Enter':
-              var nav = document.getElementsByClassName('nav_setting')
-              var targetElement = nav[tabIndex]
-              if (targetElement !== undefined) {
-                console.log(targetElement)
-                targetElement.click()
+              var dd = document.getElementById('settings_dropdown')
+              if (dd.classList.contains('open')) {
+                var ddl = document.getElementById('settings_dropdown_menu')
+                var targetElement = ddl.children[tabIndexDD]
+                if (targetElement !== undefined) {
+                  tabIndexDD = -1
+                  var ddl = document.getElementById('settings_dropdown_menu')
+                  for (var i in ddl.children) {
+                    if (ddl.children[i].style) {
+                      ddl.children[i].style.backgroundColor = 'transparent'
+                    }
+                  }
+                  var ddt = document.getElementById('settings_dropdown_toggle')
+                  ddt.click()
+                  targetElement.children[0].click()
+                }
+              } else {
+                var nav = document.getElementsByClassName('nav_setting')
+                var targetElement = nav[tabIndex]
+                if (targetElement !== undefined) {
+                  console.log(targetElement)
+                  targetElement.click()
+                }
               }
               e.stopPropagation()
               e.preventDefault()
               break;
             case 'ArrowUp':
               e.preventDefault()
-              var list = document.getElementById("setting_container")
-              var nav = document.getElementsByClassName('nav_setting')
-              if (nav.length === 0) {
-                return
-              }
-              var move = tabIndex - 1
-              var targetElement = nav[move]
-              if (targetElement !== undefined) {
-                targetElement.parentNode.style.backgroundColor = '#c0c0c0'
-                tabIndex = move
-                var prev = tabIndex + 1
-                if (nav[prev]) {
-                  nav[prev].parentNode.style.backgroundColor = 'transparent'
+              var dd = document.getElementById('settings_dropdown')
+              if (dd.classList.contains('open')) {
+                var ddl = document.getElementById('settings_dropdown_menu')
+                var move = tabIndexDD - 1
+                var targetElement = ddl.children[move]
+                if (targetElement !== undefined) {
+                  targetElement.style.backgroundColor = '#c0c0c0'
+                  tabIndexDD = move
+                  var prev = tabIndexDD + 1
+                  if (ddl.children[prev]) {
+                    ddl.children[prev].style.backgroundColor = 'transparent'
+                  }
                 }
-                list.scrollTop = (targetElement.offsetTop - 100)
+              } else {
+                var list = document.getElementById("setting_container")
+                var nav = document.getElementsByClassName('nav_setting')
+                if (nav.length === 0) {
+                  return
+                } else {
+                  var move = tabIndex - 1
+                  var targetElement = nav[move]
+                  if (targetElement !== undefined) {
+                    targetElement.parentNode.style.backgroundColor = '#c0c0c0'
+                    tabIndex = move
+                    var prev = tabIndex + 1
+                    if (nav[prev]) {
+                      nav[prev].parentNode.style.backgroundColor = 'transparent'
+                    }
+                    list.scrollTop = (targetElement.offsetTop - 100)
+                  }
+                }
               }
               break
             case 'ArrowDown':
               e.preventDefault()
-              var list = document.getElementById("setting_container")
-              var nav = document.getElementsByClassName('nav_setting')
-              if (nav.length === 0) {
-                return
-              }
-              var move = tabIndex + 1
-              var targetElement = nav[move]
-              if (targetElement !== undefined) {
-                targetElement.parentNode.style.backgroundColor = '#c0c0c0'
-                tabIndex = move
-                var prev = tabIndex - 1
-                if (nav[prev]) {
-                  nav[prev].parentNode.style.backgroundColor = 'transparent'
+              var dd = document.getElementById('settings_dropdown')
+              if (dd.classList.contains('open')) {
+                var ddl = document.getElementById('settings_dropdown_menu')
+                var move = tabIndexDD + 1
+                var targetElement = ddl.children[move]
+                if (targetElement !== undefined) {
+                  targetElement.style.backgroundColor = '#c0c0c0'
+                  tabIndexDD = move
+                  var prev = tabIndexDD - 1
+                  if (ddl.children[prev]) {
+                    ddl.children[prev].style.backgroundColor = 'transparent'
+                  }
                 }
-                list.scrollTop = (targetElement.offsetTop - 100)
+              } else {
+                var list = document.getElementById("setting_container")
+                var nav = document.getElementsByClassName('nav_setting')
+                if (nav.length === 0) {
+                  return
+                } else {
+                  var move = tabIndex + 1
+                  var targetElement = nav[move]
+                  if (targetElement !== undefined) {
+                    targetElement.parentNode.style.backgroundColor = '#c0c0c0'
+                    tabIndex = move
+                    var prev = tabIndex - 1
+                    if (nav[prev]) {
+                      nav[prev].parentNode.style.backgroundColor = 'transparent'
+                    }
+                    list.scrollTop = (targetElement.offsetTop - 100)
+                  }
+                }
               }
               break
           }
@@ -5504,7 +5578,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modalInstance });
+      window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e){ return true } });
     }
 
     $scope.terminateSessions = function () {
@@ -5741,6 +5815,76 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   .controller('UsernameEditModalController', function ($scope, $modalInstance, AppUsersManager, MtpApiManager) {
     $scope.profile = {}
     $scope.error = {}
+    var tabIndex = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+          } else {
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          console.log(e.key);
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              if (document.activeElement.tagName === 'INPUT') {
+                if (document.activeElement.value.length === 0) {
+                  document.activeElement.blur()
+                  e.preventDefault()
+                }
+              } else {
+                MODAL.dismiss()
+                e.preventDefault()
+              }
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              if (document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur()
+              } else {
+                document.getElementById('edit_username_input').focus()
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              $scope.updateUsername()
+              break;
+            case 'Enter':
+              $scope.updateUsername()
+              break;
+            case 'ArrowUp':
+              e.preventDefault()
+              break
+            case 'ArrowDown':
+              e.preventDefault()
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('UsernameEditModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('UsernameEditModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
 
     MtpApiManager.getUserID().then(function (id) {
       var user = AppUsersManager.getUser(id)
