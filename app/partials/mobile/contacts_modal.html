@@ -82,7 +82,7 @@ html {
 
           <ul ng-switch-default class="nav navbar-nav navbar-quick-nav">
             <li ng-if="action == 'select' || action == 'new_group'" class="navbar-quick-right">
-              <a ng-class="{disabled: !selectedCount}" ng-disabled="!selectedCount" ng-click="submitSelected()" my-i18n="modal_next"></a>
+              <a id="submitSelected" ng-class="{disabled: !selectedCount}" ng-disabled="!selectedCount" ng-click="submitSelected()" my-i18n="modal_next"></a>
             </li>
             <li>
               <a ng-click="$dismiss()" class="navbar-quick-media-back">

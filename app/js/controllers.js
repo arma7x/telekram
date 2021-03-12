@@ -1182,7 +1182,49 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           if (window['MODAL_STACK'] == null) {
             window['MODAL_STACK'] = []
           }
-          window['MODAL_STACK'].push({ modal: modalInstance });
+          window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e) {
+            console.log('ChatCreateModalController keydownListener', e.key);
+            switch (e.key) {
+              case 'End':
+              case 'Backspace':
+              case 'EndCall':
+                e.preventDefault()
+                e.stopPropagation()
+                if (document.activeElement.tagName === 'INPUT') {
+                  if (document.activeElement.value.length === 0) {
+                    document.activeElement.blur()
+                  }
+                } else {
+                  modalInstance.dismiss()
+                }
+                break;
+              case 'Enter':
+                var INPUT = document.getElementById('createGroup')
+                if (INPUT) {
+                  INPUT.click()
+                }
+                break
+              case 'Insert':
+              case 'SoftLeft':
+                if (document.activeElement.tagName === 'INPUT') {
+                  document.activeElement.blur()
+                } else {
+                  var INPUT = document.getElementById('group_create_name')
+                  if (INPUT) {
+                    INPUT.focus()
+                  }
+                }
+                break;
+              case 'Home':
+              case 'SoftRight':
+                var INPUT = document.getElementById('createGroup')
+                if (INPUT) {
+                  INPUT.click()
+                }
+                break;
+              }
+            }
+          });
         }
       })
     }

@@ -1,3 +1,19 @@
+<style>
+.navbar-quick-media-back h4 {
+  margin: 0px 0 0px 0;
+  line-height: normal;
+}
+.mobile_modal .modal-content {
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: 28px;
+}
+
+.mobile_modal .modal-content .modal-body {
+  padding: 5px;
+}
+
+</style>
 <div class="contacts_modal_wrap">
 
   <div class="tg_page_head tg_modal_head">
@@ -8,7 +24,7 @@
 
           <ul class="nav navbar-nav navbar-quick-nav">
             <li class="navbar-quick-right">
-              <a ng-class="{disabled: group.creating}" ng-click="createGroup()" ng-bind="group.creating ? 'group_create_submit_active' : 'group_create_submit' | i18n" ng-disabled="group.creating"></a>
+              <a id="createGroup" ng-class="{disabled: group.creating}" ng-click="createGroup()" ng-bind="group.creating ? 'group_create_submit_active' : 'group_create_submit' | i18n" ng-disabled="group.creating"></a>
             </li>
             <li>
               <a ng-click="$dismiss()" class="navbar-quick-media-back">
@@ -31,7 +47,7 @@
     <form class="modal_simple_form" ng-submit="createGroup()" my-vertical-position="0.25">
 
       <div class="form-group">
-        <input class="form-control input-lg" my-focused type="text" placeholder="{{'group_create_name' | i18n}}" ng-model="group.name"/>
+        <input id="group_create_name" class="form-control input-lg" my-focused type="text" placeholder="{{'group_create_name' | i18n}}" ng-model="group.name"/>
       </div>
 
     </form>

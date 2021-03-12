@@ -4787,6 +4787,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
               INPUT.focus()
             }
             break;
+          case 'Home':
+          case 'SoftRight':
+            var INPUT = document.getElementById('submitSelected')
+            if (INPUT) {
+              INPUT.click()
+            }
+            break;
           case 'ArrowUp':
             var INPUT = document.getElementById('contacts_modal_search_field')
             if (INPUT) {
