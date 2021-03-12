@@ -5458,7 +5458,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modal });
+      window['MODAL_STACK'].push({ modal: modal, keydownListener: function(e){ return true } });
 
       //modal.result['finally'](updatePasswordState)
     }
@@ -5563,7 +5563,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       if (window['MODAL_STACK'] == null) {
         window['MODAL_STACK'] = []
       }
-      window['MODAL_STACK'].push({ modal: modalInstance });
+      window['MODAL_STACK'].push({ modal: modalInstance, keydownListener: function(e){ return true } });
     }
 
     $scope.changeUsername = function () {
@@ -5769,6 +5769,91 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   .controller('ProfileEditModalController', function ($scope, $modalInstance, AppUsersManager, MtpApiManager) {
     $scope.profile = {}
     $scope.error = {}
+
+    var tabIndex = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            //return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              if (document.activeElement.tagName === 'INPUT') {
+                if (document.activeElement.value.length === 0) {
+                  document.activeElement.blur()
+                  e.preventDefault()
+                }
+              } else {
+                MODAL.dismiss()
+                e.preventDefault()
+              }
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              if (document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur()
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              $scope.updateProfile();
+              break;
+            case 'Enter':
+              $scope.updateProfile();
+              break;
+            case 'ArrowUp':
+              var nav = document.getElementsByClassName('form-control input-lg')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex - 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.focus()
+                tabIndex = move
+              }
+              break
+            case 'ArrowDown':
+              var nav = document.getElementsByClassName('form-control input-lg')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex + 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.focus()
+                tabIndex = move
+              }
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('ProfileEditModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('ProfileEditModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
 
     MtpApiManager.getUserID().then(function (id) {
       var user = AppUsersManager.getUser(id)
@@ -6004,6 +6089,91 @@ angular.module('myApp.controllers', ['myApp.i18n'])
 
   .controller('PasswordUpdateModalController', function ($scope, $q, _, PasswordManager, MtpApiManager, ErrorService, $modalInstance) {
     $scope.passwordSettings = {}
+
+    var tabIndex = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            modalKeydownListener(e)
+            //return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              if (document.activeElement.tagName === 'INPUT') {
+                if (document.activeElement.value.length === 0) {
+                  document.activeElement.blur()
+                  e.preventDefault()
+                }
+              } else {
+                MODAL.dismiss()
+                e.preventDefault()
+              }
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              if (document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur()
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              $scope.updatePassword();
+              break;
+            case 'Enter':
+              $scope.updatePassword();
+              break;
+            case 'ArrowUp':
+              var nav = document.getElementsByClassName('md-input')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex - 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.focus()
+                tabIndex = move
+              }
+              break
+            case 'ArrowDown':
+              var nav = document.getElementsByClassName('md-input')
+              if (nav.length === 0) {
+                return
+              }
+              var move = tabIndex + 1
+              var targetElement = nav[move]
+              if (targetElement !== undefined) {
+                targetElement.focus()
+                tabIndex = move
+              }
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('PasswordUpdateModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('PasswordUpdateModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
 
     $scope.updatePassword = function () {
       delete $scope.passwordSettings.error_field
@@ -6558,6 +6728,12 @@ angular.module('myApp.controllers', ['myApp.i18n'])
               } else {
                 MODAL.dismiss()
                 e.preventDefault()
+              }
+              break;
+            case 'Insert':
+            case 'SoftLeft':
+              if (document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur()
               }
               break;
             case 'Home':
