@@ -2485,8 +2485,10 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             }
           })
           var tabIndex = -1
-          modalInstance.result.finally(function() {
+          modalInstance.result.catch(function() {
             window['MODAL_STACK'].pop()
+          })
+          modalInstance.result.finally(function() {
             if ('spatialNavigationEnabled' in navigator) {
               navigator.spatialNavigationEnabled = false
             }
