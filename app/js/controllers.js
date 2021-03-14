@@ -96,6 +96,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           break;
         case 'Home':
         case 'SoftRight':
+        case 'PageUp':
           if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
             break
           }
@@ -216,7 +217,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 document.activeElement.blur()
               }
             } else {
-              modal.dismiss()
+              modalInstance.dismiss()
             }
             break;
           case 'Enter':
@@ -700,6 +701,9 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     var tabIndexMenu = -1
 
     var keydownListener = function(e) {
+      if (window['MODAL_STACK'] == null) {
+        window['MODAL_STACK'] = []
+      }
       if (e.key === '5' && $scope.curDialog.peer && !$scope.isComposerFocus && !$scope.isRecordingAudio && 'spatialNavigationEnabled' in navigator && window['MODAL_STACK'].length === 0) {
         if (navigator.spatialNavigationEnabled) {
           navigator.spatialNavigationEnabled = false
@@ -2482,6 +2486,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           })
           var tabIndex = -1
           modalInstance.result.finally(function() {
+            window['MODAL_STACK'].pop()
             if ('spatialNavigationEnabled' in navigator) {
               navigator.spatialNavigationEnabled = false
             }
