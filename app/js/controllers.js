@@ -96,7 +96,6 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           break;
         case 'Home':
         case 'SoftRight':
-        case 'PageUp':
           if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
             break
           }
@@ -4746,6 +4745,183 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   })
 
   .controller('UserModalController', function ($scope, $location, $rootScope, $modalInstance, AppProfileManager, $modal, AppUsersManager, MtpApiManager, NotificationsManager, AppPhotosManager, AppMessagesManager, AppPeersManager, PeersSelectService, ErrorService) {
+
+    var tabIndex = -1
+    var tabIndexDD = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            if (modalKeydownListener(e) === true) {
+              return
+            }
+          } else {
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              var dd = document.getElementById('u_modal_dropdown')
+              if (dd.classList.contains('open')) {
+                tabIndexDD = -1
+                var ddl = document.getElementById('u_modal_dropdown_menu')
+                for (var i in ddl.children) {
+                  if (ddl.children[i].style) {
+                    ddl.children[i].style.backgroundColor = 'transparent'
+                  }
+                }
+                dd.click()
+                e.preventDefault()
+              } else {
+                if (document.activeElement.tagName === 'INPUT') {
+                  if (document.activeElement.value.length === 0) {
+                    document.activeElement.blur()
+                    e.preventDefault()
+                  }
+                } else {
+                  MODAL.dismiss()
+                  e.preventDefault()
+                }
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              tabIndexDD = -1
+              var ddl = document.getElementById('u_modal_dropdown_menu')
+              for (var i in ddl.children) {
+                if (ddl.children[i].style) {
+                  ddl.children[i].style.backgroundColor = 'transparent'
+                }
+              }
+              var ddt = document.getElementById('u_modal_dropdown_toggle')
+              ddt.click()
+              break;
+            case 'Enter':
+              var dd = document.getElementById('u_modal_dropdown')
+              if (dd.classList.contains('open')) {
+                var ddl = document.getElementById('u_modal_dropdown_menu')
+                var targetElement = ddl.children[tabIndexDD]
+                if (targetElement !== undefined) {
+                  tabIndexDD = -1
+                  var ddl = document.getElementById('u_modal_dropdown_menu')
+                  for (var i in ddl.children) {
+                    if (ddl.children[i].style) {
+                      ddl.children[i].style.backgroundColor = 'transparent'
+                    }
+                  }
+                  var ddt = document.getElementById('u_modal_dropdown_toggle')
+                  ddt.click()
+                  targetElement.children[0].click()
+                }
+              } else {
+                var nav = document.getElementsByClassName('nav_u_modal')
+                var targetElement = nav[tabIndex]
+                if (targetElement !== undefined) {
+                  if (targetElement.children[0].tagName === 'A') {
+                    targetElement.children[0].click()
+                  }
+                }
+              }
+              e.stopPropagation()
+              e.preventDefault()
+              break;
+            case 'ArrowUp':
+              e.preventDefault()
+              var dd = document.getElementById('u_modal_dropdown')
+              if (dd.classList.contains('open')) {
+                var ddl = document.getElementById('u_modal_dropdown_menu')
+                var move = tabIndexDD - 1
+                var targetElement = ddl.children[move]
+                if (targetElement !== undefined) {
+                  targetElement.style.backgroundColor = '#c0c0c0'
+                  tabIndexDD = move
+                  var prev = tabIndexDD + 1
+                  if (ddl.children[prev]) {
+                    ddl.children[prev].style.backgroundColor = 'transparent'
+                  }
+                }
+              } else {
+                var list = document.getElementById("u_modal_container")
+                var nav = document.getElementsByClassName('nav_u_modal')
+                if (nav.length === 0) {
+                  return
+                } else {
+                  var move = tabIndex - 1
+                  var targetElement = nav[move]
+                  if (targetElement !== undefined) {
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                    tabIndex = move
+                    var prev = tabIndex + 1
+                    if (nav[prev]) {
+                      nav[prev].style.backgroundColor = 'transparent'
+                    }
+                    list.scrollTop = (targetElement.offsetTop - 100)
+                  }
+                }
+              }
+              break
+            case 'ArrowDown':
+              e.preventDefault()
+              var dd = document.getElementById('u_modal_dropdown')
+              if (dd.classList.contains('open')) {
+                var ddl = document.getElementById('u_modal_dropdown_menu')
+                var move = tabIndexDD + 1
+                var targetElement = ddl.children[move]
+                if (targetElement !== undefined) {
+                  targetElement.style.backgroundColor = '#c0c0c0'
+                  tabIndexDD = move
+                  var prev = tabIndexDD - 1
+                  if (ddl.children[prev]) {
+                    ddl.children[prev].style.backgroundColor = 'transparent'
+                  }
+                }
+              } else {
+                var list = document.getElementById("u_modal_container")
+                var nav = document.getElementsByClassName('nav_u_modal')
+                if (nav.length === 0) {
+                  return
+                } else {
+                  var move = tabIndex + 1
+                  var targetElement = nav[move]
+                  if (targetElement !== undefined) {
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                    tabIndex = move
+                    var prev = tabIndex - 1
+                    if (nav[prev]) {
+                      nav[prev].style.backgroundColor = 'transparent'
+                    }
+                    list.scrollTop = (targetElement.offsetTop - 100)
+                  }
+                }
+              }
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('UserModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('UserModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
+
     var peerString = AppUsersManager.getUserString($scope.userID)
 
     $scope.user = AppUsersManager.getUser($scope.userID)
@@ -5064,6 +5240,193 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   })
 
   .controller('ChannelModalController', function ($scope, $timeout, $rootScope, $modal, AppUsersManager, AppChatsManager, AppProfileManager, AppPhotosManager, MtpApiManager, MtpApiFileManager, NotificationsManager, AppMessagesManager, AppPeersManager, ApiUpdatesManager, ContactsSelectService, ErrorService) {
+
+    var tabIndex = -1
+    var tabIndexDD = -1
+
+    var keydownListener = function(e) {
+      if (window['ErrorServiceStatus']) {
+        e.preventDefault()
+        return
+      }
+      if (window['MODAL_STACK']) {
+        if (window['MODAL_STACK'].length > 0) {
+          var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
+          if (modalKeydownListener && typeof modalKeydownListener === 'function') {
+            if (modalKeydownListener(e) === true) {
+              return
+            }
+          } else {
+            return
+          }
+          var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
+          switch (e.key) {
+            case 'End':
+            case 'Backspace':
+            case 'EndCall':
+              e.stopPropagation()
+              if ($scope.hasRights('edit_title') || $scope.hasRights('edit_photo')) {
+                var dd = document.getElementById('c_modal_dropdown')
+                if (dd.classList.contains('open')) {
+                  tabIndexDD = -1
+                  var ddl = document.getElementById('c_modal_dropdown_menu')
+                  for (var i in ddl.children) {
+                    if (ddl.children[i].style) {
+                      ddl.children[i].style.backgroundColor = 'transparent'
+                    }
+                  }
+                  dd.click()
+                  e.preventDefault()
+                } 
+              } else {
+                if (document.activeElement.tagName === 'INPUT') {
+                  if (document.activeElement.value.length === 0) {
+                    document.activeElement.blur()
+                    e.preventDefault()
+                  }
+                } else {
+                  MODAL.dismiss()
+                  e.preventDefault()
+                }
+              }
+              break;
+            case 'Home':
+            case 'SoftRight':
+              if ($scope.hasRights('edit_title') || $scope.hasRights('edit_photo')) {
+                tabIndexDD = -1
+                var ddl = document.getElementById('c_modal_dropdown_menu')
+                for (var i in ddl.children) {
+                  if (ddl.children[i].style) {
+                    ddl.children[i].style.backgroundColor = 'transparent'
+                  }
+                }
+                var ddt = document.getElementById('c_modal_dropdown_toggle')
+                ddt.click()
+              }
+              break;
+            case 'Enter':
+              if ($scope.hasRights('edit_title') || $scope.hasRights('edit_photo')) {
+                var dd = document.getElementById('c_modal_dropdown')
+                if (dd.classList.contains('open')) {
+                  var ddl = document.getElementById('c_modal_dropdown_menu')
+                  var targetElement = ddl.children[tabIndexDD]
+                  if (targetElement !== undefined) {
+                    tabIndexDD = -1
+                    var ddl = document.getElementById('c_modal_dropdown_menu')
+                    for (var i in ddl.children) {
+                      if (ddl.children[i].style) {
+                        ddl.children[i].style.backgroundColor = 'transparent'
+                      }
+                    }
+                    var ddt = document.getElementById('c_modal_dropdown_toggle')
+                    ddt.click()
+                    targetElement.children[0].click()
+                  }
+                }
+              } else {
+                var nav = document.getElementsByClassName('nav_c_modal')
+                var targetElement = nav[tabIndex]
+                if (targetElement !== undefined) {
+                  if (targetElement.children[0].tagName === 'A') {
+                    targetElement.children[0].click()
+                  }
+                }
+              }
+              e.stopPropagation()
+              e.preventDefault()
+              break;
+            case 'ArrowUp':
+              e.preventDefault()
+              if ($scope.hasRights('edit_title') || $scope.hasRights('edit_photo')) {
+                var dd = document.getElementById('c_modal_dropdown')
+                if (dd.classList.contains('open')) {
+                  var ddl = document.getElementById('c_modal_dropdown_menu')
+                  var move = tabIndexDD - 1
+                  var targetElement = ddl.children[move]
+                  if (targetElement !== undefined) {
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                    tabIndexDD = move
+                    var prev = tabIndexDD + 1
+                    if (ddl.children[prev]) {
+                      ddl.children[prev].style.backgroundColor = 'transparent'
+                    }
+                  }
+                } 
+              } else {
+                var list = document.getElementById("c_modal_container")
+                var nav = document.getElementsByClassName('nav_c_modal')
+                if (nav.length === 0) {
+                  return
+                } else {
+                  var move = tabIndex - 1
+                  var targetElement = nav[move]
+                  if (targetElement !== undefined) {
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                    tabIndex = move
+                    var prev = tabIndex + 1
+                    if (nav[prev]) {
+                      nav[prev].style.backgroundColor = 'transparent'
+                    }
+                    list.scrollTop = (targetElement.offsetTop - 100)
+                  }
+                }
+              }
+              break
+            case 'ArrowDown':
+              e.preventDefault()
+              if ($scope.hasRights('edit_title') || $scope.hasRights('edit_photo')) {
+                var dd = document.getElementById('c_modal_dropdown')
+                if (dd.classList.contains('open')) {
+                  var ddl = document.getElementById('c_modal_dropdown_menu')
+                  var move = tabIndexDD + 1
+                  var targetElement = ddl.children[move]
+                  if (targetElement !== undefined) {
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                    tabIndexDD = move
+                    var prev = tabIndexDD - 1
+                    if (ddl.children[prev]) {
+                      ddl.children[prev].style.backgroundColor = 'transparent'
+                    }
+                  }
+                }
+              } else {
+                var list = document.getElementById("c_modal_container")
+                var nav = document.getElementsByClassName('nav_c_modal')
+                if (nav.length === 0) {
+                  return
+                } else {
+                  var move = tabIndex + 1
+                  var targetElement = nav[move]
+                  if (targetElement !== undefined) {
+                    targetElement.style.backgroundColor = '#c0c0c0'
+                    tabIndex = move
+                    var prev = tabIndex - 1
+                    if (nav[prev]) {
+                      nav[prev].style.backgroundColor = 'transparent'
+                    }
+                    list.scrollTop = (targetElement.offsetTop - 100)
+                  }
+                }
+              }
+              break
+          }
+          return
+        }
+      }
+    }
+
+    var _init = function() {
+      console.log('ChannelModalController $onInit');
+      document.addEventListener('keydown', keydownListener);
+    };
+
+    _init();
+
+    $scope.$on('$destroy', function() {
+      console.log('ChannelModalController $onDestroy');
+      document.removeEventListener('keydown', keydownListener);
+    });
+
     $scope.chatFull = AppChatsManager.wrapForFull($scope.chatID, {})
     $scope.settings = {notifications: true}
     $scope.isMegagroup = AppChatsManager.isMegagroup($scope.chatID)
