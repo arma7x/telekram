@@ -61,6 +61,28 @@
     margin-left: -18px;
     margin-top: 0px;
   }
+  .navbar-quick-back-title {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: -5px;
+  }
+  .navbar-quick-nav h4 {
+    font-size: 13px;
+    color: #fff;
+    margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .navbar-quick-profile-back small, .navbar-quick-group-back small {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-left: 0;
+    top: 11px;
+    position: fixed;
+  }
   .navbar-toggle-wrap {
     float: right;
     display: block;
@@ -268,14 +290,14 @@
 -->
                   <div class="navbar-quick-back-title">
                     <h4 my-peer-link="historyPeer.id" peer-watch="true"></h4>
-<!--
+
                     <small ng-switch="historyState.typing.length">
                       <span ng-switch-when="1" class="status_online">
                         <my-i18n msgid="head_typing"></my-i18n><span my-loading-dots></span>
                       </span>
                       <span ng-switch-default my-user-status="historyPeer.id" for-dialog="true"></span>
                     </small>
--->
+
                   </div>
                 </a>
               </li>
