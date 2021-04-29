@@ -165,6 +165,19 @@ function EmojiTooltip (btnEl, options) {
       }
     })
   }
+  $(this.btnEl).on('click', function (e) {
+    if (!self.shown) {
+      clearTimeout(self.showTimeout)
+      delete self.showTimeout
+      self.createTooltip()
+      self.show()
+    } else {
+      clearTimeout(self.hideTimeout)
+      delete self.hideTimeout
+      self.hide()
+    }
+    return cancelEvent(e)
+  })
   $(this.btnEl).on('mousedown', function (e) {
     if (!self.shown) {
       clearTimeout(self.showTimeout)
@@ -214,7 +227,25 @@ EmojiTooltip.prototype.createTooltip = function () {
   }
 
   var html =
-  '<div class="composer_emoji_tooltip noselect">\
+  '<style>\
+    .composer_emoji_tooltip {\
+      margin-left: -224px;\
+      margin-top: -181px;\
+      z-index: 10000;\
+      width: 230px;\
+    }\
+    .composer_emoji_tooltip_content_wrap {\
+      padding: 0px;\
+    }\
+    .composer_sticker_btn {\
+      width: 56px;\
+      height: 56px;\
+      display: inline-block;\
+      text-align: center;\
+      padding: 3px;\
+      vertical-align: top;\
+    }\
+  </style><div class="composer_emoji_tooltip noselect">\
   <div class="composer_emoji_tooltip_tabs">\
     <div class="composer_emoji_tooltip_tab composer_emoji_tooltip_tab_emoji">' + this.langpack.im_emoji_tab + '</div>\
     <div class="composer_emoji_tooltip_tab composer_emoji_tooltip_tab_stickers">' + this.langpack.im_stickers_tab + '</div>\
@@ -334,6 +365,9 @@ EmojiTooltip.prototype.createTooltip = function () {
     if (code = target.attr('data-code')) {
       if (self.onEmojiSelected) {
         self.onEmojiSelected(code)
+      }
+      if (Config.Mobile) {
+        self.hide()
       }
       EmojiHelper.pushPopularEmoji(code)
     }
@@ -623,6 +657,9 @@ EmojiTooltip.prototype.show = function () {
   } else {
     this.updateEmojiContents()
   }
+    if ('spatialNavigationEnabled' in navigator) {
+      navigator.spatialNavigationEnabled = true
+    }
   this.tooltipEl.addClass('composer_emoji_tooltip_shown')
   this.btnEl.addClass('composer_emoji_insert_btn_on')
   delete this.showTimeout
@@ -631,6 +668,9 @@ EmojiTooltip.prototype.show = function () {
 
 EmojiTooltip.prototype.hide = function () {
   if (this.tooltipEl) {
+    if ('spatialNavigationEnabled' in navigator) {
+      navigator.spatialNavigationEnabled = false
+    }
     this.tooltipEl.removeClass('composer_emoji_tooltip_shown')
     this.btnEl.removeClass('composer_emoji_insert_btn_on')
   }

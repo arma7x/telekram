@@ -755,7 +755,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'SoftLeft':
           if ($scope.curDialog.peer) {
             if ($scope.isComposerFocus) {
-              // Composer FOCUS
+              document.getElementById('emoji_composer').click()
             } else {
               var start = new Event('touchstart')
               var move = new Event('touchmove')

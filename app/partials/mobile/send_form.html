@@ -37,9 +37,9 @@
     </div>
 
     <div class="im_send_field_wrap" ng-class="replyKeyboard._ == 'replyKeyboardMarkup' ? 'im_send_field_wrap_2ndbtn' : ''">
-<!--
-      <a class="composer_emoji_insert_btn pull-right"><i class="icon icon-emoji"></i></a>
--->
+
+      <a id="emoji_composer" style="height:0px;width:0px;visibility:hidden;" class="composer_emoji_insert_btn pull-right"><i class="icon icon-emoji"></i></a>
+
       <a style="height:0px;width:0px;visibility:hidden;" class="composer_command_btn" ng-show="!replyKeyboard && commands.list.length > 0 && (!draftMessage.text.length || draftMessage.text[0] == '/')" ng-mousedown="draftMessage.toggleSlash($event)" ng-class="draftMessage.text[0] == '/' ? 'active' : ''"><i class="icon icon-slash"></i></a>
       <a style="height:0px;width:0px;visibility:hidden;" class="composer_keyboard_btn" ng-show="replyKeyboard._ == 'replyKeyboardMarkup'" ng-mousedown="draftMessage.replyKeyboardToggle($event)" ng-class="!replyKeyboard.pFlags.hidden ? 'active' : ''"><i class="icon icon-keyboard"></i></a>
 
