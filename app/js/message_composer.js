@@ -238,8 +238,8 @@ EmojiTooltip.prototype.createTooltip = function () {
       padding: 0px;\
     }\
     .composer_sticker_btn {\
-      width: 56px;\
-      height: 56px;\
+      width: 76px;\
+      height: 76px;\
       display: inline-block;\
       text-align: center;\
       padding: 3px;\
