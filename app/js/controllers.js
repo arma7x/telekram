@@ -958,7 +958,11 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             break
           } else if ($scope.curDialog.peer) {
             if ($scope.isComposerFocus) {
-              document.activeElement.blur()
+              if (document.getElementById('emoji_composer').classList.contains('composer_emoji_insert_btn_on')) {
+                document.getElementById('emoji_composer').click()
+              } else {
+                document.activeElement.blur()
+              }
               e.preventDefault()
               e.stopPropagation()
               break

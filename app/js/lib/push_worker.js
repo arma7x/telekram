@@ -242,6 +242,9 @@ self.addEventListener('notificationclick', function(event) {
         return
       }
     }
+    if (clients.openApp) {
+      return clients.openApp()
+    }
     if (clients.openWindow) {
       return getSettings().then(function (settings) {
         return clients.openWindow(settings.baseUrl || defaultBaseUrl)
