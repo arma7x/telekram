@@ -993,9 +993,21 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       }
     }
 
+    function visibilitychange() {
+      if (document.visibilityState === 'hidden') {
+        if ($scope.isComposerFocus) {
+          if (document.getElementById('emoji_composer').classList.contains('composer_emoji_insert_btn_on')) {
+            document.getElementById('emoji_composer').click()
+          }
+          document.activeElement.blur()
+        }
+      }
+    }
+
     var _init = function() {
       console.log('AppIMController $onInit');
       document.addEventListener('keydown', keydownListener);
+      document.addEventListener('visibilitychange', visibilitychange);
     };
 
     _init();
@@ -1003,6 +1015,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.$on('$destroy', function() {
       console.log('AppIMController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
+      document.removeEventListener('visibilitychange', visibilitychange);
     });
 
     var pendingParams = false
