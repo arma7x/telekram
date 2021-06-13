@@ -258,7 +258,7 @@ EmojiTooltip.prototype.createTooltip = function () {
           <div class="composer_emoji_tooltip_content composer_emoji_tooltip_content_emoji clearfix"></div>\
         </div>\
         <div class="composer_emoji_tooltip_categories">\
-          <a class="composer_emoji_tooltip_category active" data-category="0"><i class="composer_emoji_tooltip_category_recent"></i></a>\
+          <!--<a class="composer_emoji_tooltip_category active" data-category="0"><i class="composer_emoji_tooltip_category_recent"></i></a>-->\
           <a class="composer_emoji_tooltip_category" data-category="1"><i class="composer_emoji_tooltip_category_smile"></i></a>\
           <a class="composer_emoji_tooltip_category" data-category="2"><i class="composer_emoji_tooltip_category_flower"></i></a>\
           <a class="composer_emoji_tooltip_category" data-category="3"><i class="composer_emoji_tooltip_category_bell"></i></a>\

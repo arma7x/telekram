@@ -250,7 +250,7 @@
         <div class="md-input-group" ng-class="{'md-input-error': error.field == 'password'}" my-labeled-input ng-switch="error.field == 'password'">
           <label ng-switch-when="true" class="md-input-label" my-i18n="login_incorrect_password"></label>
           <label ng-switch-default class="md-input-label" my-i18n="login_password"></label>
-          <input autocomplete="off" class="md-input" my-focused name="password" type="password" ng-model="credentials.password" my-submit-on-enter required />
+          <input id="input_password" autocomplete="off" class="md-input" my-focused name="password" type="password" ng-model="credentials.password" my-submit-on-enter required />
         </div>
 
         <p ng-if="password.hint.length > 0" class="login_form_hint" ng-bind="password.hint"></p>
@@ -288,8 +288,7 @@
         </a>
       </span>
     </div>
-
-    <div ng-if="credentials.phone_code_hash &amp;&amp; !credentials.phone_code_valid" class="softkey">
+    <div ng-if="credentials.phone_code_hash &amp;&amp; !credentials.phone_code_valid &amp;&amp; credentials.password_needed == undefined" class="softkey">
       <span class="left" style="width:20%"><a id="openSMS" href="sms://+1">SMS</a></span>
       <span class="center" style="width:56%">
         <span ng-switch="nextPending.progress">
@@ -303,6 +302,24 @@
         </span>
       </span>
       <span class="right" style="width:20%">Back</span>
+    </div>
+
+    <div ng-if="credentials.phone_code_valid &amp;&amp; credentials.password_needed" class="softkey">
+      <span class="left" style="width:20%">
+<!--
+        <a id="forgotPassword" ng-click="forgotPassword($event)">
+          <span my-i18n="login_password_forgot_link"></span>
+        </a>
+-->
+      </span>
+      <span class="center" style="width:56%" my-i18n="password_recover_submit" style="text-transform: uppercase;"></span>
+      <span class="right" style="width:20%">
+<!--
+        <a id="resetAccount" ng-click="resetAccount($event)">
+          <span my-i18n="login_account_reset"></span>
+        </a>
+-->
+      </span>
     </div>
 <!--
     <div ng-switch="about.shown">

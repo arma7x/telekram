@@ -85,8 +85,12 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       switch (e.key) {
         case 'Insert':
         case 'SoftLeft':
-          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
+          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid && $scope.credentials.password_needed == undefined) {
             window.open('sms://+1')
+            break;
+          } else if ($scope.credentials.phone_code_valid && $scope.credentials.password_needed) {
+            var forgotPassword = document.getElementById('forgotPassword')
+            //forgotPassword.click()
             break;
           }
           var IDD = document.getElementById('input_idd')
@@ -96,10 +100,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           break;
         case 'Home':
         case 'SoftRight':
-          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
+          if (!($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid)) {
+            $scope.sendCode()
             break
+          } else if ($scope.credentials.phone_code_valid && $scope.credentials.password_needed) {
+            var resetAccount = document.getElementById('resetAccount')
+            //resetAccount.click()
+            break;
           }
-          $scope.sendCode()
           break;
         case 'Delete':
         case 'Call':
@@ -114,7 +122,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case 'End':
         case 'Backspace':
         case 'EndCall':
-          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
+          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid && $scope.credentials.password_needed == undefined) {
             if (document.activeElement.tagName === 'INPUT') {
               if (document.activeElement.value.length > 0) {
                 e.preventDefault()
@@ -136,11 +144,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           }
           break;
         case 'Enter':
-          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
+          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid && $scope.credentials.password_needed == undefined) {
             var SENDNEXT = document.getElementById('sendNext')
             if (SENDNEXT) {
               SENDNEXT.click()
             }
+            break
+          } else if ($scope.credentials.phone_code_valid && $scope.credentials.password_needed) {
+            $scope.checkPassword()
             break
           }
           $scope.chooseCountry()
@@ -155,11 +166,18 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         case '7':
         case '8':
         case '9':
-          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid) {
+          if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid && $scope.credentials.password_needed == undefined) {
             if (document.activeElement.tagName !== 'INPUT') {
               var PHONECODE = document.getElementById('input_phone_code')
               if (PHONECODE) {
                 PHONECODE.focus()
+              }
+            }
+          } else if ($scope.credentials.phone_code_valid && $scope.credentials.password_needed) {
+            if (document.activeElement.tagName !== 'INPUT') {
+              var PASSWORD = document.getElementById('input_password')
+              if (PASSWORD) {
+                PASSWORD.focus()
               }
             }
           }
