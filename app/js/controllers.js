@@ -4018,6 +4018,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.form = {locale: Config.I18n.locale}
 
     $scope.localeSelect = function localeSelect (newLocale) {
+      navigator.spatialNavigationEnabled = false;
       newLocale = newLocale || $scope.form.locale
       if ($scope.curLocale !== newLocale) {
         ErrorService.confirm({type: 'APPLY_LANG_WITH_RELOAD'}).then(function () {
@@ -4040,7 +4041,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
   .controller('PhotoModalController', function ($q, $scope, $rootScope, $modalInstance, AppPhotosManager, AppMessagesManager, AppPeersManager, AppWebPagesManager, PeersSelectService, ErrorService) {
 
     var keydownListener = function(e) {
-      console.log('PhotoModalController keydownListener', e.key);
+      // console.log('PhotoModalController keydownListener', e.key);
       if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
           var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
@@ -4085,13 +4086,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
     
     var _init = function() {
-      console.log('PhotoModalController $onInit');
+      // console.log('PhotoModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('PhotoModalController $onDestroy');
+      // console.log('PhotoModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -4300,7 +4301,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var keydownListener = function(e) {
-      console.log('UserpicModalController keydownListener', e.key);
+      // console.log('UserpicModalController keydownListener', e.key);
       if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
           var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
@@ -4345,13 +4346,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
     
     var _init = function() {
-      console.log('UserpicModalController $onInit');
+      // console.log('UserpicModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('UserpicModalController $onDestroy');
+      // console.log('UserpicModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -4547,7 +4548,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var keydownListener = function(e) {
-      console.log('ChatpicModalController keydownListener', e.key);
+      // console.log('ChatpicModalController keydownListener', e.key);
       if (window['MODAL_STACK']) {
         if (window['MODAL_STACK'].length > 0) {
           var modalKeydownListener = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].keydownListener
@@ -4592,13 +4593,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
     
     var _init = function() {
-      console.log('ChatpicModalController $onInit');
+      // console.log('ChatpicModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('ChatpicModalController $onDestroy');
+      // console.log('ChatpicModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -4946,14 +4947,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('UserModalController $onInit');
+      // console.log('UserModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('UserModalController $onDestroy');
+      // console.log('UserModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -5451,14 +5452,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('ChannelModalController $onInit');
+      // console.log('ChannelModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('ChannelModalController $onDestroy');
+      // console.log('ChannelModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -5734,8 +5735,19 @@ angular.module('myApp.controllers', ['myApp.i18n'])
                 var nav = document.getElementsByClassName('nav_setting')
                 var targetElement = nav[tabIndex]
                 if (targetElement !== undefined) {
-                  console.log(targetElement)
-                  targetElement.click()
+                  // console.log(targetElement)
+                  if (targetElement.id === 'lang_selector') {
+                    const s = document.getElementById('select_lang');
+                    s.addEventListener('click', function() {
+                      navigator.spatialNavigationEnabled = false;
+                    })
+                    navigator.spatialNavigationEnabled = true;
+                    setTimeout(function() {
+                      navigator.spatialNavigationEnabled = false;
+                    }, 2000);
+                  } else {
+                    targetElement.click()
+                  }
                 }
               }
               e.stopPropagation()
@@ -5818,14 +5830,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('SettingsModalController $onInit');
+      // console.log('SettingsModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('SettingsModalController $onDestroy');
+      // console.log('SettingsModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -6291,14 +6303,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('ProfileEditModalController $onInit');
+      // console.log('ProfileEditModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('ProfileEditModalController $onDestroy');
+      // console.log('ProfileEditModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -6363,7 +6375,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
             return
           }
           var MODAL = window['MODAL_STACK'][window['MODAL_STACK'].length - 1].modal
-          console.log(e.key);
+          // console.log(e.key);
           switch (e.key) {
             case 'End':
             case 'Backspace':
@@ -6407,14 +6419,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('UsernameEditModalController $onInit');
+      // console.log('UsernameEditModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('UsernameEditModalController $onDestroy');
+      // console.log('UsernameEditModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -6611,14 +6623,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('PasswordUpdateModalController $onInit');
+      // console.log('PasswordUpdateModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('PasswordUpdateModalController $onDestroy');
+      // console.log('PasswordUpdateModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -7221,14 +7233,14 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     var _init = function() {
-      console.log('ImportContactModalController $onInit');
+      // console.log('ImportContactModalController $onInit');
       document.addEventListener('keydown', keydownListener);
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('ImportContactModalController $onDestroy');
+      // console.log('ImportContactModalController $onDestroy');
       document.removeEventListener('keydown', keydownListener);
     });
 
@@ -7270,13 +7282,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     $scope.slice = {limit: 20, limitDelta: 20}
 
     var _init = function() {
-      console.log('CountrySelectModalController $onInit');
+      // console.log('CountrySelectModalController $onInit');
     };
 
     _init();
 
     $scope.$on('$destroy', function() {
-      console.log('CountrySelectModalController $onDestroy');
+      // console.log('CountrySelectModalController $onDestroy');
     });
 
     var searchIndex = SearchIndexManager.createIndex()

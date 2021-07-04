@@ -134,8 +134,8 @@
 
 
     <div class="mobile_modal_action_wrap clearfix" ng-controller="AppLangSelectController">
-      <div class="mobile_modal_select_wrap pull-right">
-        <select class="form-control" ng-change="localeSelect()" ng-model="form.locale">
+      <div id="lang_selector" class="mobile_modal_select_wrap pull-right nav_setting">
+        <select id="select_lang" class="form-control" ng-change="localeSelect()" ng-model="form.locale">
           <option ng-repeat="locale in ::supportedLocales" value="{{locale}}" ng-bind="langNames[locale]" ng-selected="locale == curLocale"></option>
         </select>
       </div>
