@@ -3748,7 +3748,7 @@ angular.module('myApp.services')
           }
           if (update.pFlags.popup && update.message) {
             var historyMessage = wrapForHistory(messageID)
-            ErrorService.show({error: {code: 400, type: 'UPDATE_SERVICE_NOTIFICATION'}, historyMessage: historyMessage})
+            // ErrorService.show({error: {code: 400, type: 'UPDATE_SERVICE_NOTIFICATION'}, historyMessage: historyMessage})
           }
           break
       }
