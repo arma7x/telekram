@@ -147,6 +147,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
           if ($scope.credentials.phone_code_hash && !$scope.credentials.phone_code_valid && $scope.credentials.password_needed == undefined) {
             var SENDNEXT = document.getElementById('sendNext')
             if (SENDNEXT) {
+              console.log('GET Code via SMS 1');
               SENDNEXT.click()
             }
             break
@@ -495,6 +496,7 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     function applySentCode (sentCode) {
+      console.log('GET Code via SMS 3', sentCode);
       $scope.credentials.type = sentCode.type
       $scope.nextPending.type = sentCode.next_type || false
       $scope.nextPending.remaining = sentCode.timeout || false
@@ -508,10 +510,13 @@ angular.module('myApp.controllers', ['myApp.i18n'])
     }
 
     $scope.sendNext = function () {
+      
+      console.log('GET Code via SMS 2', $scope.nextPending.type, $scope.nextPending.remaining);
       if (!$scope.nextPending.type ||
         $scope.nextPending.remaining > 0) {
         return
       }
+      console.log('GET Code via SMS 2');
       $scope.nextPending.progress = true
       MtpApiManager.invokeApi('auth.resendCode', {
         phone_number: $scope.credentials.phone_full,

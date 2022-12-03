@@ -1,3 +1,4 @@
+# Alternative client is here https://github.com/arma7x/svelte-telekram
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
 ## [Webogram](https://web.telegram.org) — Telegram Web App
